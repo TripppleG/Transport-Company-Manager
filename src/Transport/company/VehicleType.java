@@ -1,8 +1,8 @@
 package Transport.company;
 
 public enum VehicleType {
-    Bus,
-    Van,
-    Truck,
-    Tank
+    BUS,
+    VAN,
+    TRUCK,
+    FUEL_TANK
 }
