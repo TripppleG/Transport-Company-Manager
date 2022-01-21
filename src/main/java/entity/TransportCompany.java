@@ -24,9 +24,9 @@ public class TransportCompany implements Comparable<TransportCompany> {
     @OneToMany
     @Column(name = "vehicles")
     private Set<Vehicle> vehicles;
-    @OneToMany
-    @Column(name = "shipments")
-    private Set<Shipment> shipments;
+  //  @ManyToOne
+//    @Column(name = "shipments")
+//    private Set<Shipment> shipments;
 
     public TransportCompany(String name, String bulstat, Set<Driver> drivers, Set<Client> clients, Set<Vehicle> vehicles, Set<Shipment> shipments) {
         setName(name);
@@ -34,7 +34,7 @@ public class TransportCompany implements Comparable<TransportCompany> {
         this.drivers = drivers;
         this.clients = clients;
         this.vehicles = vehicles;
-        this.shipments = shipments;
+       // this.shipments = shipments;
     }
 
 
@@ -45,7 +45,7 @@ public class TransportCompany implements Comparable<TransportCompany> {
         drivers = new TreeSet<>();
         clients = new TreeSet<>();
         vehicles = new TreeSet<>();
-        shipments = new TreeSet<>();
+        //shipments = new TreeSet<>();
     }
 
     public String getAddress() {
@@ -96,7 +96,7 @@ public class TransportCompany implements Comparable<TransportCompany> {
     }
 
     public void setShipments(Set<Shipment> shipments) {
-        this.shipments = shipments;
+        //this.shipments = shipments;
     }
 
     public Set<Driver> getDrivers() {
@@ -111,9 +111,9 @@ public class TransportCompany implements Comparable<TransportCompany> {
         return vehicles;
     }
 
-    public Set<Shipment> getShipments() {
-        return shipments;
-    }
+//    public Set<Shipment> getShipments() {
+//        return shipments;
+//    }
 
     @Override
     public boolean equals(Object o) {
@@ -140,9 +140,9 @@ public class TransportCompany implements Comparable<TransportCompany> {
         for (Client c : clients) {
             printCompany = printCompany.concat('\n' + c.toString());
         }
-        for (Shipment s : shipments) {
-            printCompany = printCompany.concat('\n' + s.toString());
-        }
+//        for (Shipment s : shipments) {
+//            printCompany = printCompany.concat('\n' + s.toString());
+//        }
         printCompany = printCompany.concat("\n\n");
         return printCompany;
     }

@@ -1,16 +1,31 @@
 package entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
+@Table(name = "goods_shipment")
+public class GoodsShipment extends Shipment<Double> {
+    @Column(name = "weight_of_shipment", nullable = false)
+    private double weightOfShipmentInKilograms;
 
-public class GoodsShipment extends Shipment {
-    //@Column(name = "weightOfShipment", nullable = false)
-    private int weightOfShipmentInKilograms;
-
-    GoodsShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, int weightOfShipmentInKilograms) {
+    public GoodsShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, int weightOfShipmentInKilograms) {
         super(departingAddress, arrivalAddress, departingDate, arrivalDate, shipmentPrice);
         setsWightOfShipmentInKilograms(weightOfShipmentInKilograms);
+    }
+
+    public GoodsShipment() {
+        super();
+        weightOfShipmentInKilograms = 0;
+    }
+
+    @Override
+    public Double getShipmentAmount() {
+        return weightOfShipmentInKilograms;
     }
 
     private void setsWightOfShipmentInKilograms(int weightOfShipmentInKilograms) {
@@ -18,10 +33,6 @@ public class GoodsShipment extends Shipment {
             throw new IllegalArgumentException("The wight of the shipment cannot be less than zero!");
         }
         this.weightOfShipmentInKilograms = weightOfShipmentInKilograms;
-    }
-
-    public double getSizeOfShipment() {
-        return weightOfShipmentInKilograms;
     }
 
     @Override
@@ -39,6 +50,6 @@ public class GoodsShipment extends Shipment {
 
     @Override
     public String toString() {
-        return super.toString() + "Weight of shipment: " + weightOfShipmentInKilograms + "KG\n" + "Type of shipment: Goods";
+        return super.toString() + "Weight of shipment: " + weightOfShipmentInKilograms + "KG\nType of shipment: Goods";
     }
 }

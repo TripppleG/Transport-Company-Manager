@@ -4,28 +4,26 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Entity
-@Table(name = "Shipment")
+@MappedSuperclass
 public abstract class Shipment<T> implements Comparable<Shipment> {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "shipment_id")
     protected Long shipment_id;
 
-    @Column(name = "departingAddress", nullable = false)
+    @Column(name = "departing_address", nullable = false)
     protected String departingAddress;
 
-    @Column(name = "arrivalAddress", nullable = false)
+    @Column(name = "arrival_address", nullable = false)
     protected String arrivalAddress;
 
-    @Column(name = "departingDate", nullable = false)
+    @Column(name = "departing_date", nullable = false)
     protected LocalDate departingDate;
 
-    @Column(name = "arrivalDate", nullable = false)
+    @Column(name = "arrival_date", nullable = false)
     protected LocalDate arrivalDate;
 
-    @Column(name = "shipmentPrice", nullable = false)
+    @Column(name = "shipment_price", nullable = false)
     protected double shipmentPrice;
 
     protected Shipment() {
@@ -45,10 +43,6 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
 
     public Long getShipment_id() {
         return shipment_id;
-    }
-
-    public void setShipment_id(Long shipment_id) {
-        this.shipment_id = shipment_id;
     }
 
     public String getDepartingAddress() {
@@ -98,10 +92,12 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
 
     private void setShipmentPrice(double shipmentPrice) {
         if (shipmentPrice < 0) {
-            throw new IllegalArgumentException("The price cannot be less than 0");
+            throw new IllegalArgumentException("The price can't be less than 0.00!");
         }
         this.shipmentPrice = shipmentPrice;
     }
+
+    public abstract T getShipmentAmount();
 
     @Override
     public boolean equals(Object o) {

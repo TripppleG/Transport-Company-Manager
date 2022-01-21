@@ -2,28 +2,36 @@ package entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
+@Table(name = "fuel_shipment")
+public class FuelTankShipment extends Shipment<Double> {
+    @Column(name = "volume_of_shipment_un_litres", nullable = false)
+    private double volumeOfShipmentInLitres;
 
-public class FuelTankShipment extends Shipment {
-    @Column(name = "", nullable = false)
-    private int volumeOfShipmentInLitres;
-
-    FuelTankShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, int volumeOfShipmentInLitres) {
+    public FuelTankShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, int volumeOfShipmentInLitres) {
         super(departingAddress, arrivalAddress, departingDate, arrivalDate, shipmentPrice);
-        setSizeInLitres(volumeOfShipmentInLitres);
+        setVolumeOfShipmentInLitres(volumeOfShipmentInLitres);
     }
 
-    private void setSizeInLitres(int volumeOfShipmentInLitres) {
+    public FuelTankShipment() {
+        super();
+        volumeOfShipmentInLitres = 0;
+    }
+
+    @Override
+    public Double getShipmentAmount() {
+        return volumeOfShipmentInLitres;
+    }
+
+    private void setVolumeOfShipmentInLitres(int volumeOfShipmentInLitres) {
         if (volumeOfShipmentInLitres < 0) {
             throw new IllegalArgumentException("The volume of the shipment cannot be less than zero!");
         }
         this.volumeOfShipmentInLitres = volumeOfShipmentInLitres;
-    }
-
-    public double getSizeOfShipment() {
-        return volumeOfShipmentInLitres;
     }
 
     @Override
@@ -41,6 +49,6 @@ public class FuelTankShipment extends Shipment {
 
     @Override
     public String toString() {
-        return super.toString() + "Volume of shipment: " + volumeOfShipmentInLitres + "l\n" + "Type of shipment: Fuel";
+        return super.toString() + "Volume of shipment: " + volumeOfShipmentInLitres + "l\nType of shipment: Fuel";
     }
 }
