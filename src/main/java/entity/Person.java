@@ -6,7 +6,6 @@ import java.util.Objects;
 
 @MappedSuperclass
 public abstract class Person implements Comparable<Person> {
-
     @Column(name = "name", nullable = false)
     protected String name;
     @Column(name = "age", nullable = false)

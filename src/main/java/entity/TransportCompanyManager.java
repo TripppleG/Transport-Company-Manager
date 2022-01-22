@@ -1,13 +1,9 @@
 package entity;
 
-import javassist.bytecode.DuplicateMemberException;
-
-import javax.persistence.Entity;
-import java.util.TreeSet;
-
+import java.util.Set;
 
 public class TransportCompanyManager {
-    private TreeSet<TransportCompany> transportCompanies;
+    private Set<TransportCompany> transportCompanies;
 
     void addCompany(TransportCompany transportCompany) {
         boolean result = transportCompanies.add(transportCompany);

@@ -1,8 +1,5 @@
 package Enums;
 
-import javax.persistence.Embeddable;
-
-@Embeddable
 public enum DriverQualification {
     NORMAL_CARGO,
     SPECIAL_CARGO,

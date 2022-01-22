@@ -13,13 +13,16 @@ public class Driver extends Person {
     @Column(name = "salary")
     double salary;
 
-    @Column(name = "qualifications")
-    @ElementCollection
+    @ElementCollection(targetClass = DriverQualification.class)
+    @JoinTable(name = "driver_qualifications", joinColumns = @JoinColumn(name = "driver_ucn"))
+    @Column(name = "qualification", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Set<DriverQualification> qualification;
 
     public Driver(String name, int age, String UCN, String phoneNumber, double salary, Set<DriverQualification> qualification) {
         super(name, age, UCN, phoneNumber);
         this.qualification = qualification;
+        setSalary(salary);
     }
 
     public Driver(){

@@ -8,7 +8,6 @@ import org.hibernate.Transaction;
 import java.util.List;
 
 public class TransportCompanyDAO {
-
     public static void saveTransportCompany(TransportCompany transportCompany) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();

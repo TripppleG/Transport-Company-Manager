@@ -4,8 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "shipment")
+@MappedSuperclass
 public abstract class Shipment<T> implements Comparable<Shipment> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

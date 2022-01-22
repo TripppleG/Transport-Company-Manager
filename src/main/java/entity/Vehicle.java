@@ -17,8 +17,9 @@ public class Vehicle implements Comparable<Vehicle> {
     private String brand;
     @Column(name = "model", nullable = false)
     private String model;
+
     @Column(name = "vehicleType", nullable = false)
-    @Embedded
+    @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
 
     @Id
@@ -55,7 +56,7 @@ public class Vehicle implements Comparable<Vehicle> {
     }
 
     private void setModel(@NotNull String model) {
-        String modelRegex = "[A-Za-z0-9 ]+";
+        String modelRegex = "[A-Za-z0-9 -]+";
         if (!model.matches(modelRegex)) {
             throw new IllegalArgumentException("The model must contain only letters and digits!");
         }
@@ -66,7 +67,7 @@ public class Vehicle implements Comparable<Vehicle> {
         return vehicleType;
     }
 
-    private void setVehicleType(VehicleType vehicleType) {
+    private void setVehicleType(@NotNull VehicleType vehicleType) {
         this.vehicleType = vehicleType;
     }
 
