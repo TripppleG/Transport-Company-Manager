@@ -1,5 +1,8 @@
 package Enums;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 public enum VehicleType {
     BUS,
     VAN,

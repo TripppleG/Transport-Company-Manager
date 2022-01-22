@@ -4,10 +4,7 @@ import Enums.VehicleType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -21,6 +18,7 @@ public class Vehicle implements Comparable<Vehicle> {
     @Column(name = "model", nullable = false)
     private String model;
     @Column(name = "vehicleType", nullable = false)
+    @Embedded
     private VehicleType vehicleType;
 
     @Id
