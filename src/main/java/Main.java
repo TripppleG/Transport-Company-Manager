@@ -1,6 +1,3 @@
-
-//import dao.DriverDAO;
-//import dao.VehicleDAO;
 import Enums.DriverQualification;
 import Enums.VehicleType;
 import dao.DriverDAO;
@@ -27,8 +24,9 @@ public class Main {
         Set<DriverQualification> a = new TreeSet<>();
         a.add(DriverQualification.MORE_THAN_12_PEOPLE);
         a.add(DriverQualification.HAZARD_CARGO);
-        Person p = new Driver("pesho", 27, "9411031703", "+359897838108", 1000, a);
-        DriverDAO.saveDriver((Driver) p);
+        Driver p = new Driver("pesho", 27, "9411031703", "+359897838108", 1000, a);
+        DriverDAO.saveDriver(p);
+        Client c = new Client();
 
     }
 }

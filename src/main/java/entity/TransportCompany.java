@@ -1,9 +1,8 @@
 package entity;
 
-import org.hibernate.annotations.Columns;
+import dao.*;
 
 import javax.persistence.*;
-import java.lang.annotation.Inherited;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -11,35 +10,51 @@ import java.util.TreeSet;
 @Entity
 @Table(name = "transport_company")
 public class TransportCompany implements Comparable<TransportCompany> {
+    @Id
+    @Column(name = "bulstat")
+    private String bulstat;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "address", nullable = false)
     private String address;
 
-    @Id
-    @Column(name = "id")
-    private String bulstat;
     @OneToMany
     @Column(name = "drivers")
     private Set<Driver> drivers;
+
     @OneToMany
     @Column(name = "clients")
     private Set<Client> clients;
+
     @OneToMany
     @Column(name = "vehicles")
     private Set<Vehicle> vehicles;
-//    @OneToMany
-//    @Column(name = "shipments")
-   // private Set<Shipment> shipments;
 
-    public TransportCompany(String name, String bulstat, Set<Driver> drivers, Set<Client> clients, Set<Vehicle> vehicles, Set<Shipment> shipments) {
+    @OneToMany
+    @Column(name = "fuel_tank_shipments")
+    private Set<FuelTankShipment> fuelTankShipments;
+
+    @OneToMany
+    @Column(name = "goods_shipments")
+    private Set<GoodsShipment> goodsShipments;
+
+    @OneToMany
+    @Column(name = "people_shipments")
+    private Set<PeopleShipment> peopleShipments;
+
+    public TransportCompany(String name, String bulstat, Set<Driver> drivers, Set<Client> clients, Set<Vehicle> vehicles, Set<FuelTankShipment> fuelTankShipments,
+                            Set<GoodsShipment> goodsShipments, Set<PeopleShipment> peopleShipments ) {
         setName(name);
         setBulstat(bulstat);
         this.drivers = drivers;
         this.clients = clients;
         this.vehicles = vehicles;
-        //this.shipments = shipments;
+        this.fuelTankShipments = fuelTankShipments;
+        this.goodsShipments = goodsShipments;
+        this.peopleShipments = peopleShipments;
     }
-
-
 
     public TransportCompany() {
         name = "";
@@ -47,7 +62,9 @@ public class TransportCompany implements Comparable<TransportCompany> {
         drivers = new TreeSet<>();
         clients = new TreeSet<>();
         vehicles = new TreeSet<>();
-        //shipments = new TreeSet<>();
+        fuelTankShipments = new TreeSet<>();
+        goodsShipments = new TreeSet<>();
+        peopleShipments = new TreeSet<>();
     }
 
     public String getAddress() {
@@ -85,22 +102,6 @@ public class TransportCompany implements Comparable<TransportCompany> {
         this.bulstat = bulstat;
     }
 
-    public void setDrivers(Set<Driver> drivers) {
-        this.drivers = drivers;
-    }
-
-    public void setClients(Set<Client> clients) {
-        this.clients = clients;
-    }
-
-    public void setVehicles(Set<Vehicle> vehicles) {
-        this.vehicles = vehicles;
-    }
-
-//    public void setShipments(Set<Shipment> shipments) {
-//        this.shipments = shipments;
-//    }
-
     public Set<Driver> getDrivers() {
         return drivers;
     }
@@ -113,9 +114,17 @@ public class TransportCompany implements Comparable<TransportCompany> {
         return vehicles;
     }
 
-//    public Set<Shipment> getShipments() {
-//        return shipments;
-//    }
+    public Set<FuelTankShipment> getFuelTankShipments() {
+        return fuelTankShipments;
+    }
+
+    public Set<GoodsShipment> getGoodsShipments() {
+        return goodsShipments;
+    }
+
+    public Set<PeopleShipment> getPeopleShipments() {
+        return peopleShipments;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -132,20 +141,29 @@ public class TransportCompany implements Comparable<TransportCompany> {
     @Override
     public String toString() {
         String printCompany = "";
-        printCompany = printCompany.concat("Name: " + name + '\n');
-        printCompany = printCompany.concat("Bulstat: " + bulstat + '\n');
-        printCompany = printCompany.concat("Drivers:\n");
+        printCompany += "Name: " + name;
+        printCompany += "\nBulstat: " + bulstat;
+        printCompany +=  "\nDrivers:";
         for (Driver d : drivers) {
-
-            printCompany = printCompany.concat('\n' + d.toString());
+            printCompany += '\n' + d.toString();
         }
+        printCompany +=  "\nClients:";
         for (Client c : clients) {
-            printCompany = printCompany.concat('\n' + c.toString());
+            printCompany = '\n' + c.toString();
         }
-//        for (Shipment s : shipments) {
-//            printCompany = printCompany.concat('\n' + s.toString());
-//        }
-        printCompany = printCompany.concat("\n\n");
+        printCompany +=  "\nFuel Tank Shipments:";
+        for (FuelTankShipment fts : fuelTankShipments) {
+            printCompany += '\n' + fts.toString();
+        }
+        printCompany +=  "\nGoods Shipments:";
+        for (GoodsShipment gs : goodsShipments) {
+            printCompany += '\n' + gs.toString();
+        }
+        printCompany +=  "\nPeople Shipments:";
+        for (PeopleShipment ps : peopleShipments) {
+            printCompany += '\n' + ps.toString();
+        }
+        printCompany += "\n\n";
         return printCompany;
     }
 
@@ -153,4 +171,78 @@ public class TransportCompany implements Comparable<TransportCompany> {
     public int compareTo(TransportCompany o) {
         return name.compareTo(o.name);
     }
+
+    public void addClient(Client client){
+        ClientDAO.saveClient(client);
+    }
+
+    public void addDriver(Driver driver){
+        DriverDAO.saveDriver(driver);
+    }
+
+    public void addVehicle(Vehicle vehicle){
+        VehicleDAO.saveVehicle(vehicle);
+    }
+
+    public void addGoodsShipment(GoodsShipment goodsShipment){
+        GoodsShipmentDAO.saveGoodsShipment(goodsShipment);
+    }
+
+    public void addFuelTankShipment(FuelTankShipment fuelTankShipment) {
+        FuelTankShipmentDAO.saveFuelTankShipment(fuelTankShipment);
+    }
+
+    public void addPeopleShipment(PeopleShipment peopleShipment) {
+        PeopleShipmentDAO.savePeopleShipment(peopleShipment);
+    }
+
+
+    public void removeClient(String ucn){
+        ClientDAO.deleteClient(ClientDAO.getClient(ucn));
+    }
+
+    public void removeDriver(String ucn){
+        DriverDAO.deleteDriver(DriverDAO.getDriver(ucn));
+    }
+
+    public void removeVehicle(String licenseNumber){
+        VehicleDAO.deleteVehicle(VehicleDAO.getVehicle(licenseNumber));
+    }
+
+    public void removeGoodsShipment(long id){
+        GoodsShipmentDAO.deleteGoodsShipment(GoodsShipmentDAO.getGoodsShipment(id));
+    }
+
+    public void removeFuelTankShipment(long id) {
+        FuelTankShipmentDAO.deleteFuelTankShipment(FuelTankShipmentDAO.getFuelTankShipment(id));
+    }
+
+    public void removePeopleShipment(long id) {
+        PeopleShipmentDAO.deletePeopleShipment(PeopleShipmentDAO.getPeopleShipment(id));
+    }
+
+    public void removeAllClients(){
+        ClientDAO.deleteClients(this.clients);
+    }
+
+    public void removeAllDrivers(){
+        DriverDAO.deleteDrivers(this.drivers);
+    }
+
+    public void addAllVehicles(){
+        VehicleDAO.deleteVehicles(this.vehicles);
+    }
+
+    public void remoteAllGoodsShipments(){
+        GoodsShipmentDAO.deleteGoodsShipments(this.goodsShipments);
+    }
+
+    public void removeAllFuelTankShipments() {
+        FuelTankShipmentDAO.deleteFuelTankShipments(this.fuelTankShipments);
+    }
+
+    public void removeAllPeopleShipment() {
+        PeopleShipmentDAO.deletePeopleShipments(this.peopleShipments);
+    }
+
 }

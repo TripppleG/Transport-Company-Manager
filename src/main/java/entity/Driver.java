@@ -3,12 +3,12 @@ package entity;
 import Enums.DriverQualification;
 
 import javax.persistence.*;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
 @Entity
 @Table(name = "driver")
+@DiscriminatorValue("driver")
 public class Driver extends Person {
     @Column(name = "salary")
     double salary;
@@ -62,18 +62,5 @@ public class Driver extends Person {
             listOfQualifications += ", ";
         }
         return super.toString() + "\nSalary: " + salary + "\nQualifications: " + listOfQualifications;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Driver)) return false;
-        if (!super.equals(o)) return false;
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode());
     }
 }

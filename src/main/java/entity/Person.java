@@ -95,7 +95,7 @@ public abstract class Person implements Comparable<Person> {
         } else {
             throw new IllegalArgumentException("The month of the UCN is invalid!");
         }
-        // In 1902 is born the oldest person alive
+        // The oldest person alive is born in 1902
         if (year < 1902 || year > LocalDate.now().getYear()) {
             throw new IllegalArgumentException("The year in the UCN is invalid!");
         }
@@ -113,8 +113,7 @@ public abstract class Person implements Comparable<Person> {
         }
 
         // The formula for calculating the last digit of the UCN
-        int lastDigit =
-                ((UCN.charAt(0) - '0') * 2 + (UCN.charAt(1) - '0') * 4 + (UCN.charAt(2) - '0') * 8 +
+        int lastDigit = ((UCN.charAt(0) - '0') * 2 + (UCN.charAt(1) - '0') * 4 + (UCN.charAt(2) - '0') * 8 +
                         (UCN.charAt(3) - '0') * 5 + (UCN.charAt(4) - '0') * 10 + (UCN.charAt(5) - '0') * 9 +
                         (UCN.charAt(6) - '0') * 7 + (UCN.charAt(7) - '0') * 3 + (UCN.charAt(8) - '0') * 6) % 11;
 

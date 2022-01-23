@@ -6,6 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "goods_shipment")
+@DiscriminatorValue("goods_shipment")
 public class GoodsShipment extends Shipment<Double> {
     @Column(name = "weight_of_shipment", nullable = false)
     private double weightOfShipmentInKilograms;

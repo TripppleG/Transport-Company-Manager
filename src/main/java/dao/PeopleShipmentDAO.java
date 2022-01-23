@@ -6,8 +6,11 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PeopleShipmentDAO {
+
     public static void savePeopleShipment(PeopleShipment peopleShipment) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -16,17 +19,52 @@ public class PeopleShipmentDAO {
         }
     }
 
-    public static void savePeopleShipments(List<PeopleShipment> peopleShipmentList) {
+    public static void saveOrUpdatePeopleShipment(PeopleShipment peopleShipment) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            peopleShipmentList.stream().forEach((v) -> session.save(v));
+            session.saveOrUpdate(peopleShipment);
             transaction.commit();
         }
     }
 
-    public static List<PeopleShipment> readPeopleShipments() {
+    public static void deletePeopleShipment(PeopleShipment peopleShipment) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT a FROM PeopleShipment a", PeopleShipment.class).getResultList();
+            Transaction transaction = session.beginTransaction();
+            session.delete(peopleShipment);
+            transaction.commit();
+        }
+    }
+
+    public static void savePeopleShipments(Set<PeopleShipment> peopleShipmentSet) {
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            peopleShipmentSet.stream().forEach(ps -> session.save(ps));
+            transaction.commit();
+        }
+    }
+
+    public static Set<PeopleShipment> readPeopleShipments() {
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            return Set.copyOf(session.createQuery("SELECT ps FROM PeopleShipment ps", PeopleShipment.class).getResultList());
+        }
+    }
+
+    public static PeopleShipment getPeopleShipment(long id) {
+        PeopleShipment peopleShipment;
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            peopleShipment = session.get(PeopleShipment.class, id);
+            transaction.commit();
+        }
+        return peopleShipment;
+    }
+
+    public static void deletePeopleShipments(Set<PeopleShipment> peopleShipments) {
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            peopleShipments.stream().forEach(ps -> session.delete(ps));
+            transaction.commit();
         }
     }
 }
+

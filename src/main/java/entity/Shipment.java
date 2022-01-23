@@ -9,7 +9,7 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "shipment_id")
-    protected Long shipment_id;
+    protected long shipmentId;
 
     @Column(name = "departing_address", nullable = false)
     protected String departingAddress;
@@ -31,6 +31,7 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
         arrivalAddress = "";
         departingDate = LocalDate.of(1, 1, 1);
         arrivalDate = LocalDate.of(1, 1, 1);
+        shipmentPrice = 0;
     }
 
     public Shipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice) {
@@ -42,7 +43,7 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
     }
 
     public Long getShipment_id() {
-        return shipment_id;
+        return shipmentId;
     }
 
     public String getDepartingAddress() {

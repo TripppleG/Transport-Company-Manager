@@ -1,6 +1,7 @@
 package entity;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "fuel_shipment")
+@DiscriminatorValue("fuel_shipment")
 public class FuelTankShipment extends Shipment<Double> {
     @Column(name = "volume_of_shipment_un_litres", nullable = false)
     private double volumeOfShipmentInLitres;
