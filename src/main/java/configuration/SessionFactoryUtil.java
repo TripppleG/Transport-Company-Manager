@@ -1,6 +1,5 @@
 package configuration;
 
-import dao.GoodsShipmentDAO;
 import entity.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;

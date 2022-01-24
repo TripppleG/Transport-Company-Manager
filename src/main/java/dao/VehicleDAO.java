@@ -4,6 +4,7 @@ import configuration.SessionFactoryUtil;
 import entity.Vehicle;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import java.util.Set;
 
 public class VehicleDAO {

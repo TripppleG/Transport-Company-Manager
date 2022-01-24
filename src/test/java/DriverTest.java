@@ -1,4 +1,4 @@
-import Enums.DriverQualification;
+import enums.DriverQualification;
 import entity.Driver;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

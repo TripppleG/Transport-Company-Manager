@@ -1,13 +1,13 @@
 package dao;
 
 import configuration.SessionFactoryUtil;
-import entity.Driver;
-import entity.PeopleShipment;
 import entity.TransportCompany;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import java.util.List;
 import java.util.Set;
+
 
 public class TransportCompanyDAO {
     public static void saveTransportCompany(TransportCompany transportCompany) {
@@ -35,6 +35,19 @@ public class TransportCompanyDAO {
             transportCompany.getGoodsShipments().stream().forEach(goodsShipment -> GoodsShipmentDAO.deleteGoodsShipment(goodsShipment));
             transportCompany.getPeopleShipments().stream().forEach(peopleShipment -> PeopleShipmentDAO.deletePeopleShipment(peopleShipment));
             session.delete(transportCompany);
+            transaction.commit();
+        }
+    }
+
+    /**
+     *
+     * @param transportCompanySet
+     */
+    public static void deleteTransportCompanies(Set<TransportCompany> transportCompanySet) {
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            transportCompanySet.stream().forEach(transportCompany -> deleteTransportCompany(transportCompany));
+            session.delete(transportCompanySet);
             transaction.commit();
         }
     }

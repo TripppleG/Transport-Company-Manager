@@ -4,6 +4,7 @@ import configuration.SessionFactoryUtil;
 import entity.Driver;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class DriverDAO {
     public static void saveDrivers(Set<Driver> driverSet) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            driverSet.stream().forEach(d -> session.saveOrUpdate(d));
+            driverSet.stream().forEach(d -> session.save(d));
             transaction.commit();
         }
     }
@@ -68,7 +69,7 @@ public class DriverDAO {
 
     public static List<Driver> sortDriversBySalary(){
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Salary FROM Driver Salary ORDER BY Salary.salary", Driver.class).getResultList();
+                return session.createQuery("SELECT Salary FROM Driver Salary ORDER BY Salary.salary", Driver.class).getResultList();
         }
     }
 
@@ -76,7 +77,7 @@ public class DriverDAO {
     // Sorts the drivers' qualifications by size ascending
     public static List<Driver> sortDriversByQualifications(){
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Qualifications FROM Driver Qualifications order by Qualifications.qualifications.size", Driver.class).getResultList();
+            return session.createQuery("SELECT Qualifications FROM Driver Qualifications ORDER BY Qualifications.qualifications.size", Driver.class).getResultList();
         }
     }
 

@@ -1,6 +1,7 @@
 package entity;
 
 import dao.TransportCompanyDAO;
+
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;

@@ -1,12 +1,7 @@
-import Enums.DriverQualification;
-import Enums.VehicleType;
 import dao.DriverDAO;
-import dao.GoodsShipmentDAO;
-import dao.PeopleShipmentDAO;
-import dao.VehicleDAO;
-import entity.*;
+import entity.Driver;
+import enums.DriverQualification;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 

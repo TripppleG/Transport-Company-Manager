@@ -1,10 +1,10 @@
 package dao;
 
 import configuration.SessionFactoryUtil;
-import entity.FuelTankShipment;
 import entity.PeopleShipment;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import java.util.List;
 import java.util.Set;
 
@@ -68,7 +68,7 @@ public class PeopleShipmentDAO {
 
     public static List<PeopleShipment> sortFuelTankShipmentByDestination(){
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Arrival_Date FROM PeopleShipment Arrival_Date ORDER BY Arrival_Date.arrivalDate", PeopleShipment.class).getResultList();
+            return session.createQuery("SELECT Arrival_Address FROM PeopleShipment Arrival_Address ORDER BY Arrival_Address.arrivalAddress", PeopleShipment.class).getResultList();
         }
     }
 }

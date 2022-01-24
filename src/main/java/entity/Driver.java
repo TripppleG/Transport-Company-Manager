@@ -1,6 +1,6 @@
 package entity;
 
-import Enums.DriverQualification;
+import enums.DriverQualification;
 
 import javax.persistence.*;
 import java.util.Set;
