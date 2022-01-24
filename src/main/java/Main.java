@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Main {
-
     public static void main(String[] args) {
 //      Shipment a = new PeopleShipment("dsdas", "dsadas", LocalDate.now(), LocalDate.of(2032, 12, 12), 12.53, 10);
 //      Vehicle b = new Vehicle("Mercedes", "C-class", VehicleType.BUS, "C3223BA");
@@ -32,11 +31,5 @@ public class Main {
         b.add(gosho);
         b.add(misho);
         DriverDAO.saveDrivers(b);
-
-//        DriverDAO.saveDrivers(b);
-        System.out.println("ddadsdsadadad");
-//        for (Driver d : b) {
-//            System.out.println(d.toString());
-//        }
     }
 }

@@ -26,6 +26,7 @@ public class Driver extends Person {
     }
 
     public Driver(){
+        super();
         qualifications = new TreeSet();
         salary = 0;
     }

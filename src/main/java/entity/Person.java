@@ -116,6 +116,9 @@ public abstract class Person implements Comparable<Person> {
         int lastDigit = ((UCN.charAt(0) - '0') * 2 + (UCN.charAt(1) - '0') * 4 + (UCN.charAt(2) - '0') * 8 +
                         (UCN.charAt(3) - '0') * 5 + (UCN.charAt(4) - '0') * 10 + (UCN.charAt(5) - '0') * 9 +
                         (UCN.charAt(6) - '0') * 7 + (UCN.charAt(7) - '0') * 3 + (UCN.charAt(8) - '0') * 6) % 11;
+        if (lastDigit == 10) {
+            lastDigit = 0;
+        }
 
         if (lastDigit != UCN.charAt(9) - '0') {
             throw new IllegalArgumentException("The UCN is invalid!");
