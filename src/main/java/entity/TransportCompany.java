@@ -3,6 +3,7 @@ package entity;
 import dao.*;
 
 import javax.persistence.*;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -19,6 +20,9 @@ public class TransportCompany implements Comparable<TransportCompany> {
 
     @Column(name = "address", nullable = false)
     private String address;
+
+    @Column(name = "income", nullable = false)
+    private double income;
 
     @OneToMany
     @Column(name = "drivers")
@@ -44,10 +48,11 @@ public class TransportCompany implements Comparable<TransportCompany> {
     @Column(name = "people_shipments")
     private Set<PeopleShipment> peopleShipments;
 
-    public TransportCompany(String name, String bulstat, Set<Driver> drivers, Set<Client> clients, Set<Vehicle> vehicles, Set<FuelTankShipment> fuelTankShipments,
+    public TransportCompany(String name, String bulstat, double income, Set<Driver> drivers, Set<Client> clients, Set<Vehicle> vehicles, Set<FuelTankShipment> fuelTankShipments,
                             Set<GoodsShipment> goodsShipments, Set<PeopleShipment> peopleShipments ) {
         setName(name);
         setBulstat(bulstat);
+        setIncome(income);
         this.drivers = drivers;
         this.clients = clients;
         this.vehicles = vehicles;
@@ -59,6 +64,7 @@ public class TransportCompany implements Comparable<TransportCompany> {
     public TransportCompany() {
         name = "";
         bulstat = "";
+        income = 0;
         drivers = new TreeSet<>();
         clients = new TreeSet<>();
         vehicles = new TreeSet<>();
@@ -102,6 +108,17 @@ public class TransportCompany implements Comparable<TransportCompany> {
         this.bulstat = bulstat;
     }
 
+    public double getIncome() {
+        return income;
+    }
+
+    public void setIncome(double income) {
+        if (income < 0) {
+            throw new IllegalArgumentException("The income can't be less than zero!");
+        }
+        this.income = income;
+    }
+
     public Set<Driver> getDrivers() {
         return drivers;
     }
@@ -143,6 +160,7 @@ public class TransportCompany implements Comparable<TransportCompany> {
         String printCompany = "";
         printCompany += "Name: " + name;
         printCompany += "\nBulstat: " + bulstat;
+        printCompany += "\nIncome: " + income;
         printCompany +=  "\nDrivers:";
         for (Driver d : drivers) {
             printCompany += '\n' + d.toString();
@@ -172,6 +190,7 @@ public class TransportCompany implements Comparable<TransportCompany> {
         return name.compareTo(o.name);
     }
 
+    // Add functionalities
     public void addClient(Client client){
         ClientDAO.saveClient(client);
     }
@@ -196,7 +215,7 @@ public class TransportCompany implements Comparable<TransportCompany> {
         PeopleShipmentDAO.savePeopleShipment(peopleShipment);
     }
 
-
+    // Remove functionalities
     public void removeClient(String ucn){
         ClientDAO.deleteClient(ClientDAO.getClient(ucn));
     }
@@ -229,7 +248,7 @@ public class TransportCompany implements Comparable<TransportCompany> {
         DriverDAO.deleteDrivers(this.drivers);
     }
 
-    public void addAllVehicles(){
+    public void removeAllVehicles(){
         VehicleDAO.deleteVehicles(this.vehicles);
     }
 
@@ -245,4 +264,70 @@ public class TransportCompany implements Comparable<TransportCompany> {
         PeopleShipmentDAO.deletePeopleShipments(this.peopleShipments);
     }
 
+    // UpdateFunctionalities
+    public void updateClient(String ucnOfClientToBeUpdated, Client toBeUpdatedWith){
+        for(Client c: clients) {
+            if (c.getUCN().equals(ucnOfClientToBeUpdated)) {
+                c = toBeUpdatedWith;
+                ClientDAO.saveOrUpdateClient(ClientDAO.getClient(toBeUpdatedWith.UCN));
+                return;
+            }
+        }
+        throw new NoSuchElementException("No client with UCN " + ucnOfClientToBeUpdated + " exists!");
+    }
+
+    public void updateDriver(String ucnOfDriverToBeUpdated, Driver toBeUpdatedWith){
+        for(Driver d: drivers) {
+            if (d.getUCN().equals(ucnOfDriverToBeUpdated)) {
+                d = toBeUpdatedWith;
+                DriverDAO.saveOrUpdateDriver(DriverDAO.getDriver(toBeUpdatedWith.UCN));
+                return;
+            }
+        }
+        throw new NoSuchElementException("No driver with UCN " + ucnOfDriverToBeUpdated + " exists!");
+    }
+
+    public void updateVehicle(String licenseNumberOfVehicleToBeUpdated, Vehicle toBeUpdatedWith){
+        for(Vehicle v: vehicles) {
+            if (v.getLicenseNumber().equals(licenseNumberOfVehicleToBeUpdated)) {
+                v = toBeUpdatedWith;
+                VehicleDAO.saveOrUpdateVehicle(VehicleDAO.getVehicle(toBeUpdatedWith.getLicenseNumber()));
+                return;
+            }
+        }
+        throw new NoSuchElementException("No vehicle with license number " + licenseNumberOfVehicleToBeUpdated + " exists!");
+    }
+
+    public void updateGoodsShipment(long idOfShipmentToBeUpdated, GoodsShipment toBeUpdatedWith){
+        for(GoodsShipment gs: goodsShipments) {
+            if (gs.getShipmentId().equals(idOfShipmentToBeUpdated)) {
+                gs = toBeUpdatedWith;
+                GoodsShipmentDAO.saveOrUpdateGoodsShipment(GoodsShipmentDAO.getGoodsShipment(toBeUpdatedWith.getShipmentId()));
+                return;
+            }
+        }
+        throw new NoSuchElementException("No shipment with id " + idOfShipmentToBeUpdated + " exists!");
+    }
+
+    public void updateFuelTankShipment(long idOfShipmentToBeUpdated, FuelTankShipment toBeUpdatedWith){
+        for(FuelTankShipment fts: fuelTankShipments) {
+            if (fts.getShipmentId().equals(idOfShipmentToBeUpdated)) {
+                fts = toBeUpdatedWith;
+                FuelTankShipmentDAO.saveOrUpdateFuelTankShipment(FuelTankShipmentDAO.getFuelTankShipment(toBeUpdatedWith.getShipmentId()));
+                return;
+            }
+        }
+        throw new NoSuchElementException("No shipment with id " + idOfShipmentToBeUpdated + " exists!");
+    }
+
+    public void updatePeopleShipment(long idOfShipmentToBeUpdated, PeopleShipment toBeUpdatedWith){
+        for(PeopleShipment ps: peopleShipments) {
+            if (ps.getShipmentId().equals(idOfShipmentToBeUpdated)) {
+                ps = toBeUpdatedWith;
+                PeopleShipmentDAO.saveOrUpdatePeopleShipment(PeopleShipmentDAO.getPeopleShipment(toBeUpdatedWith.getShipmentId()));
+                return;
+            }
+        }
+        throw new NoSuchElementException("No shipment with id " + idOfShipmentToBeUpdated + " exists!");
+    }
 }

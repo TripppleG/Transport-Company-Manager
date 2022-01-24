@@ -58,6 +58,11 @@ public class VehicleDAO {
     }
 
     public static void deleteVehicles(Set<Vehicle> vehicles) {
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            vehicles.stream().forEach(v -> session.delete(v));
+            transaction.commit();
+        }
     }
 }
 

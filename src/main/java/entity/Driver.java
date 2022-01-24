@@ -11,22 +11,22 @@ import java.util.TreeSet;
 @DiscriminatorValue("driver")
 public class Driver extends Person {
     @Column(name = "salary")
-    double salary;
+    private double salary;
 
-    @ElementCollection(targetClass = DriverQualification.class)
+    @ElementCollection(targetClass = DriverQualification.class, fetch = FetchType.EAGER)
     @JoinTable(name = "driver_qualifications", joinColumns = @JoinColumn(name = "driver_ucn"))
-    @Column(name = "qualification", nullable = false)
+    @Column(name = "qualifications", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Set<DriverQualification> qualification;
+    private Set<DriverQualification> qualifications;
 
-    public Driver(String name, int age, String UCN, String phoneNumber, double salary, Set<DriverQualification> qualification) {
+    public Driver(String name, int age, String UCN, String phoneNumber, double salary, Set<DriverQualification> qualifications) {
         super(name, age, UCN, phoneNumber);
-        this.qualification = qualification;
+        this.qualifications = qualifications;
         setSalary(salary);
     }
 
     public Driver(){
-        qualification = new TreeSet();
+        qualifications = new TreeSet();
         salary = 0;
     }
 
@@ -42,25 +42,25 @@ public class Driver extends Person {
     }
 
     public Set<DriverQualification> getQualification() {
-        return qualification;
+        return qualifications;
     }
 
     private void setQualification(Set<DriverQualification> qualification) {
-        this.qualification = qualification;
+        this.qualifications = qualification;
     }
 
     @Override
     public String toString() {
         String listOfQualifications = "";
-        int counter = 0;
-        for (DriverQualification dq : qualification) {
+        int counter = 1;
+        for (DriverQualification dq : qualifications) {
             listOfQualifications += dq.name();
-            if (counter == qualification.size()) {
+            if (counter == qualifications.size()) {
                 break;
             }
             counter++;
             listOfQualifications += ", ";
         }
-        return super.toString() + "\nSalary: " + salary + "\nQualifications: " + listOfQualifications;
+        return super.toString() + "\nSalary: " + salary + "\nQualifications: " + listOfQualifications + '\n';
     }
 }

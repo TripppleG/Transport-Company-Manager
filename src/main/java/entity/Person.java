@@ -13,7 +13,7 @@ public abstract class Person implements Comparable<Person> {
     @Id
     @Column(name = "ucn")
     protected String UCN;
-    @Column(name = "phoneNumber", nullable = true)
+    @Column(name = "phoneNumber", nullable = true, unique = true)
     protected String phoneNumber;
 
     protected Person(String name, int age, String UCN, String phoneNumber) {

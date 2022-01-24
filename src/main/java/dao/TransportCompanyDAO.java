@@ -1,12 +1,13 @@
 package dao;
 
 import configuration.SessionFactoryUtil;
+import entity.Driver;
+import entity.PeopleShipment;
 import entity.TransportCompany;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class TransportCompanyDAO {
     public static void saveTransportCompany(TransportCompany transportCompany) {
@@ -16,7 +17,6 @@ public class TransportCompanyDAO {
             transaction.commit();
         }
     }
-
 
     public static void saveOrUpdateTransportCompany(TransportCompany transportCompany) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
@@ -49,17 +49,53 @@ public class TransportCompanyDAO {
         return company;
     }
 
-    public static void saveTransportCompanies(Set<TransportCompany> transportCompanySet) {
+    public static void saveTransportCompanies(Set<TransportCompany> transportCompanyList) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            transportCompanySet.stream().forEach(trCmp -> session.save(trCmp));
+            transportCompanyList.stream().forEach(trCmp -> session.save(trCmp));
             transaction.commit();
         }
     }
 
-    public static Set<TransportCompany> readTransportCompanies() {
+    public static List<TransportCompany> readTransportCompanies() {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return Set.copyOf(session.createQuery("SELECT trComp FROM TransportCompany trComp", TransportCompany.class).getResultList());
+            return session.createQuery("SELECT trCmp FROM TransportCompany trCmp", TransportCompany.class).getResultList();
+        }
+    }
+
+    public static List<TransportCompany> sortTransportCompanyByName(){
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            return session.createQuery("SELECT Name FROM TransportCompany Name ORDER BY Name.name", TransportCompany.class).getResultList();
+        }
+    }
+
+    public static List<TransportCompany> sortTransportCompanyByIncome(){
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            return session.createQuery("SELECT Income FROM TransportCompany Income ORDER BY Income.income", TransportCompany.class).getResultList();
+        }
+    }
+
+    public static List<TransportCompany> sortAllShipmentsByDestination(){
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            return session.createQuery("SELECT Destination FROM PeopleShipment join GoodsShipment join FuelTankShipment Destination ORDER BY Destination.arrivalDate",
+                    TransportCompany.class).getResultList();
+
+        }
+    }
+
+    public static List<TransportCompany> countOfAllShipments(){
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            return session.createQuery("SELECT COUNT(All_Shipments) FROM PeopleShipment join GoodsShipment join FuelTankShipment All_Shipments",
+                    TransportCompany.class).getResultList();
+
+        }
+    }
+
+    public static List<TransportCompany> priceOfAllShipments(){
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            return session.createQuery("SELECT COUNT(All_Shipments_Price) FROM PeopleShipment.shipmentPrice join GoodsShipment.shipmentPrice join FuelTankShipment.shipmentPrice All_Shipments_Price",
+                    TransportCompany.class).getResultList();
+
         }
     }
 }

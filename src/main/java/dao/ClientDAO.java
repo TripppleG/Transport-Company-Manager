@@ -4,6 +4,7 @@ import configuration.SessionFactoryUtil;
 import entity.Client;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import java.util.List;
 import java.util.Set;
 
 public class ClientDAO {
@@ -48,9 +49,9 @@ public class ClientDAO {
         }
     }
 
-    public static Set<Client> readClients() {
+    public static List<Client> readClients() {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return Set.copyOf(session.createQuery("SELECT c FROM Client c", Client.class).getResultList());
+            return session.createQuery("SELECT c FROM Client c", Client.class).getResultList();
         }
     }
 

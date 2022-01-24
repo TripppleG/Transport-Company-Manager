@@ -4,6 +4,7 @@ import configuration.SessionFactoryUtil;
 import entity.Driver;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import java.util.List;
 import java.util.Set;
 
 public class DriverDAO {
@@ -36,14 +37,14 @@ public class DriverDAO {
     public static void saveDrivers(Set<Driver> driverSet) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            driverSet.stream().forEach(d -> session.save(d));
+            driverSet.stream().forEach(d -> session.saveOrUpdate(d));
             transaction.commit();
         }
     }
 
-    public static Set<Driver> readDrivers() {
+    public static List<Driver> readDrivers() {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return Set.copyOf(session.createQuery("SELECT d FROM Driver d", Driver.class).getResultList());
+            return session.createQuery("SELECT d FROM Driver d", Driver.class).getResultList();
         }
     }
 
@@ -64,5 +65,25 @@ public class DriverDAO {
             transaction.commit();
         }
     }
-}
 
+    public static List<Driver> sortDriversBySalary(){
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            return session.createQuery("SELECT Salary FROM Driver Salary ORDER BY Salary.salary", Driver.class).getResultList();
+        }
+    }
+
+
+    // Sorts the drivers' qualifications by size ascending
+    public static List<Driver> sortDriversByQualifications(){
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            return session.createQuery("SELECT Qualifications FROM Driver Qualifications order by Qualifications.qualifications.size", Driver.class).getResultList();
+        }
+    }
+
+    public static List<Driver> sortDriversBySalaryThenQualifications(){
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            return session.createQuery("SELECT Salart_And_Qualifications FROM Driver Salart_And_Qualifications ORDER BY Salart_And_Qualifications.salary, Salart_And_Qualifications.qualifications.size",
+                    Driver.class).getResultList();
+        }
+    }
+}

@@ -1,13 +1,12 @@
 package dao;
 
 import configuration.SessionFactoryUtil;
+import entity.FuelTankShipment;
 import entity.PeopleShipment;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class PeopleShipmentDAO {
 
@@ -43,9 +42,9 @@ public class PeopleShipmentDAO {
         }
     }
 
-    public static Set<PeopleShipment> readPeopleShipments() {
+    public static List<PeopleShipment> readPeopleShipments() {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return Set.copyOf(session.createQuery("SELECT ps FROM PeopleShipment ps", PeopleShipment.class).getResultList());
+            return session.createQuery("SELECT ps FROM PeopleShipment ps", PeopleShipment.class).getResultList();
         }
     }
 
@@ -64,6 +63,12 @@ public class PeopleShipmentDAO {
             Transaction transaction = session.beginTransaction();
             peopleShipments.stream().forEach(ps -> session.delete(ps));
             transaction.commit();
+        }
+    }
+
+    public static List<PeopleShipment> sortFuelTankShipmentByDestination(){
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            return session.createQuery("SELECT Arrival_Date FROM PeopleShipment Arrival_Date ORDER BY Arrival_Date.arrivalDate", PeopleShipment.class).getResultList();
         }
     }
 }

@@ -42,7 +42,7 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
         setShipmentPrice(shipmentPrice);
     }
 
-    public Long getShipment_id() {
+    public Long getShipmentId() {
         return shipmentId;
     }
 
