@@ -39,10 +39,6 @@ public class TransportCompanyDAO {
         }
     }
 
-    /**
-     *
-     * @param transportCompanySet
-     */
     public static void deleteTransportCompanies(Set<TransportCompany> transportCompanySet) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -76,39 +72,26 @@ public class TransportCompanyDAO {
         }
     }
 
-    public static List<TransportCompany> sortTransportCompanyByName(){
-        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Name FROM TransportCompany Name ORDER BY Name.name", TransportCompany.class).getResultList();
-        }
-    }
-
-    public static List<TransportCompany> sortTransportCompanyByIncome(){
-        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Income FROM TransportCompany Income ORDER BY Income.income", TransportCompany.class).getResultList();
-        }
-    }
-
     public static List<TransportCompany> sortAllShipmentsByDestination(){
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Destination FROM PeopleShipment join GoodsShipment join FuelTankShipment Destination ORDER BY Destination.arrivalDate",
+            return session.createQuery("SELECT Destination FROM PeopleShipment join GoodsShipment join FuelTankShipment Destination ORDER BY Destination.arrivalAddress",
                     TransportCompany.class).getResultList();
 
         }
     }
 
-    public static List<TransportCompany> countOfAllShipments(){
+    public static int countOfAllShipments(){
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             return session.createQuery("SELECT COUNT(All_Shipments) FROM PeopleShipment join GoodsShipment join FuelTankShipment All_Shipments",
-                    TransportCompany.class).getResultList();
+                    TransportCompany.class).getFetchSize();
 
         }
     }
 
-    public static List<TransportCompany> priceOfAllShipments(){
+    public static double priceOfAllShipments(){
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT COUNT(All_Shipments_Price) FROM PeopleShipment.shipmentPrice join GoodsShipment.shipmentPrice join FuelTankShipment.shipmentPrice All_Shipments_Price",
-                    TransportCompany.class).getResultList();
-
+            return session.createQuery("SELECT SUM(All_Shipments_Price) FROM PeopleShipment.shipmentPrice JOIN GoodsShipment.shipmentPrice JOIN FuelTankShipment.shipmentPrice All_Shipments_Price",
+                    TransportCompany.class).getFetchSize().doubleValue();
         }
     }
 }

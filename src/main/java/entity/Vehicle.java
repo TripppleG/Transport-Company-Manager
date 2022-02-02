@@ -1,14 +1,12 @@
 package entity;
 
 import enums.VehicleType;
+import org.hibernate.tool.schema.spi.SchemaDropper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "vehicle")
@@ -22,21 +20,32 @@ public class Vehicle implements Comparable<Vehicle> {
     @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
 
+    @ManyToOne(targetEntity = TransportCompany.class)
+    private TransportCompany company;
+
+    @ManyToOne(targetEntity = Driver.class)
+    @JoinColumn(name = "driven_by")
+    private Driver driver;
+
     @Id
     private String licenseNumber;
 
-    public Vehicle(String brand, String model, VehicleType vehicleType, String licenseNumber) {
+    public Vehicle(String brand, String model, VehicleType vehicleType, String licenseNumber, TransportCompany company, Driver driver) {
         setBrand(brand);
         setModel(model);
         setVehicleType(vehicleType);
         setLicenseNumber(licenseNumber);
+        this.company = company;
+        this.driver = driver;
     }
 
     public Vehicle() {
+        company = new TransportCompany();
         brand = "";
         model = "";
         vehicleType = VehicleType.NULL;
         licenseNumber = "";
+        driver = new Driver();
     }
 
     public String getBrand() {

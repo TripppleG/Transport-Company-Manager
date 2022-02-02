@@ -1,35 +1,54 @@
 package entity;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Entity
 @Table(name = "fuel_shipment")
 @DiscriminatorValue("fuel_shipment")
 public class FuelTankShipment extends Shipment<Double> {
-    @Column(name = "volume_of_shipment_un_litres", nullable = false)
+    @Column(name = "volume_of_shipment_in_litres", nullable = false)
     private double volumeOfShipmentInLitres;
 
-    public FuelTankShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, int volumeOfShipmentInLitres) {
+    @ManyToMany
+    @Column(name = "clients")
+    private Set<Client> clients;
+
+    @ManyToOne
+    private TransportCompany company;
+
+    public FuelTankShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, double volumeOfShipmentInLitres,
+                            TransportCompany company, Set<Client> clients) {
         super(departingAddress, arrivalAddress, departingDate, arrivalDate, shipmentPrice);
         setVolumeOfShipmentInLitres(volumeOfShipmentInLitres);
+        this.company = company;
+        this.clients = clients;
     }
 
     public FuelTankShipment() {
         super();
         volumeOfShipmentInLitres = 0;
+        company = new TransportCompany();
+        clients = new TreeSet<>();
+    }
+
+    public Set<Client> getClients() {
+        return clients;
+    }
+
+    public TransportCompany getCompany() {
+        return company;
     }
 
     @Override
-    public Double getShipmentAmount() {
+    public Double getShipmentSize() {
         return volumeOfShipmentInLitres;
     }
 
-    private void setVolumeOfShipmentInLitres(int volumeOfShipmentInLitres) {
+    private void setVolumeOfShipmentInLitres(double volumeOfShipmentInLitres) {
         if (volumeOfShipmentInLitres < 0) {
             throw new IllegalArgumentException("The volume of the shipment cannot be less than zero!");
         }

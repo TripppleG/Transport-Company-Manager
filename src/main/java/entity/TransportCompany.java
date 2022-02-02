@@ -3,10 +3,7 @@ package entity;
 import dao.*;
 
 import javax.persistence.*;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
 @Table(name = "transport_company")
@@ -24,32 +21,37 @@ public class TransportCompany implements Comparable<TransportCompany> {
     @Column(name = "income", nullable = false)
     private double income;
 
-    @OneToMany
+    @OneToMany(mappedBy = "company", targetEntity = Driver.class)
     @Column(name = "drivers")
     private Set<Driver> drivers;
 
-    @OneToMany
+    @ManyToMany(targetEntity = Client.class)
     @Column(name = "clients")
     private Set<Client> clients;
 
-    @OneToMany
+    @OneToMany(mappedBy = "company", targetEntity = Vehicle.class)
     @Column(name = "vehicles")
     private Set<Vehicle> vehicles;
 
-    @OneToMany
+    @OneToMany(mappedBy = "company", targetEntity = FuelTankShipment.class)
     @Column(name = "fuel_tank_shipments")
     private Set<FuelTankShipment> fuelTankShipments;
 
-    @OneToMany
+    @OneToMany(mappedBy = "company", targetEntity = GoodsShipment.class)
     @Column(name = "goods_shipments")
     private Set<GoodsShipment> goodsShipments;
 
-    @OneToMany
+    @OneToMany(mappedBy = "company", targetEntity = PeopleShipment.class)
     @Column(name = "people_shipments")
     private Set<PeopleShipment> peopleShipments;
 
+    @ManyToMany(targetEntity = Client.class)
+    @Column(name = "clients_obligations")
+    private Map<Client, Double> clientsObligations;
+
     public TransportCompany(String name, String bulstat, double income, Set<Driver> drivers, Set<Client> clients, Set<Vehicle> vehicles, Set<FuelTankShipment> fuelTankShipments,
-                            Set<GoodsShipment> goodsShipments, Set<PeopleShipment> peopleShipments ) {
+                            Set<GoodsShipment> goodsShipments, Set<PeopleShipment> peopleShipments, Map<Client, Double> clientsObligations) {
+        this.clientsObligations = clientsObligations;
         setName(name);
         setBulstat(bulstat);
         setIncome(income);

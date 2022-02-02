@@ -98,7 +98,7 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
         this.shipmentPrice = shipmentPrice;
     }
 
-    public abstract T getShipmentAmount();
+    public abstract T getShipmentSize();
 
     @Override
     public boolean equals(Object o) {
