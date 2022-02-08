@@ -4,29 +4,43 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@MappedSuperclass
+@Entity
+@Table(name = "shipment")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Shipment<T> implements Comparable<Shipment> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "shipment_id")
     protected long shipmentId;
 
-    @Column(name = "departing_address", nullable = false)
+    @Column(name = "departing_address"/*, nullable = false*/)
     protected String departingAddress;
 
-    @Column(name = "arrival_address", nullable = false)
+    @Column(name = "arrival_address"/*, nullable = false*/)
     protected String arrivalAddress;
 
-    @Column(name = "departing_date", nullable = false)
+    @Column(name = "departing_date"/*, nullable = false*/)
     protected LocalDate departingDate;
 
-    @Column(name = "arrival_date", nullable = false)
+    @Column(name = "arrival_date"/*, nullable = false*/)
     protected LocalDate arrivalDate;
 
-    @Column(name = "shipment_price", nullable = false)
+    @Column(name = "shipment_price"/*, nullable = false*/)
     protected double shipmentPrice;
 
-    protected Shipment() {
+    @ManyToOne
+    @JoinColumn(name = "client", nullable = true)
+    protected Client client;
+
+    @ManyToOne(targetEntity = Driver.class)
+    @JoinColumn(name = "driver", nullable = true)
+    protected Driver driver;
+
+    @ManyToOne(targetEntity = TransportCompany.class)
+    @JoinColumn(name = "company", nullable = true)
+    protected TransportCompany company;
+
+    public Shipment() {
         departingAddress = "";
         arrivalAddress = "";
         departingDate = LocalDate.of(1, 1, 1);
@@ -40,10 +54,36 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
         setDepartingDate(departingDate);
         setArrivalDate(arrivalDate);
         setShipmentPrice(shipmentPrice);
+        //this.client = new Client();
+        //this.driver = new Driver();
+        //this.company = new TransportCompany();
+    }
+
+    public Shipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, Client client, Driver driver, TransportCompany company) {
+        setDepartingAddress(departingAddress);
+        setArrivalAddress(arrivalAddress);
+        setDepartingDate(departingDate);
+        setArrivalDate(arrivalDate);
+        setShipmentPrice(shipmentPrice);
+        this.client = client;
+        this.driver = driver;
+        this.company = company;
     }
 
     public Long getShipmentId() {
         return shipmentId;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public Driver getDriver() {
+        return driver;
+    }
+
+    public TransportCompany getCompany() {
+        return company;
     }
 
     public String getDepartingAddress() {

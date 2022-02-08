@@ -9,9 +9,10 @@ import org.hibernate.Transaction;
 import java.util.List;
 
 public class TransportCompanyManagerDAO {
-    public static void saveTransportCompany(TransportCompanyManager transportCompanyManager) {
+    public static void saveTransportCompanyManager(TransportCompanyManager transportCompanyManager) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
+            transportCompanyManager.getTransportCompanies().stream().forEach(transportCompany -> TransportCompanyDAO.saveTransportCompany(transportCompany));
             session.save(transportCompanyManager);
             transaction.commit();
         }
@@ -20,6 +21,7 @@ public class TransportCompanyManagerDAO {
     public static void saveOrUpdateTransportCompany(TransportCompanyManager transportCompanyManager) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
+            transportCompanyManager.getTransportCompanies().stream().forEach(transportCompany -> TransportCompanyDAO.saveOrUpdateTransportCompany(transportCompany));
             session.saveOrUpdate(transportCompanyManager);
             transaction.commit();
         }

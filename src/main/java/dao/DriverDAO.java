@@ -13,6 +13,7 @@ public class DriverDAO {
     public static void saveDriver(Driver driver) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
+            TransportCompanyDAO.saveTransportCompany(driver.getCompany());
             session.save(driver);
             transaction.commit();
         }
@@ -83,7 +84,7 @@ public class DriverDAO {
 
     public static List<Driver> sortDriversBySalaryThenQualifications(){
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Salart_And_Qualifications FROM Driver Salart_And_Qualifications ORDER BY Salart_And_Qualifications.salary, Salart_And_Qualifications.qualifications.size",
+            return session.createQuery("SELECT Salary_And_Qualifications FROM Driver Salary_And_Qualifications ORDER BY Salary_And_Qualifications.salary, Salary_And_Qualifications.qualifications.size",
                     Driver.class).getResultList();
         }
     }

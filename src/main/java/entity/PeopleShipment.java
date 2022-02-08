@@ -3,44 +3,21 @@ package entity;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Entity
 @Table(name = "people_transport")
-@DiscriminatorValue("people_transport")
 public class PeopleShipment extends Shipment<Integer> {
     @Column(name = "number_of_people", nullable = false)
     private int numberOfPeople;
 
-    @ManyToMany
-    @Column(name = "clients")
-    private Set<Client> clients;
-
-    @ManyToOne(targetEntity = TransportCompany.class)
-    private TransportCompany company;
-
-    public PeopleShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, int numberOfPeople,
-                          TransportCompany company, Set<Client> clients) {
+    public PeopleShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, int numberOfPeople) {
         super(departingAddress, arrivalAddress, departingDate, arrivalDate, shipmentPrice);
         setNumberOfPeople(numberOfPeople);
-        this.company = company;
-        this.clients = clients;
     }
 
     public PeopleShipment() {
         super();
         numberOfPeople = 0;
-        company = new TransportCompany();
-        clients = new TreeSet<>();
-    }
-
-    public Set<Client> getClients() {
-        return clients;
-    }
-
-    public TransportCompany getCompany() {
-        return company;
     }
 
     @Override

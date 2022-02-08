@@ -14,11 +14,11 @@ public class Driver extends Person {
     private double salary;
 
     @ManyToOne(targetEntity = TransportCompany.class)
-    @JoinColumn(name = "working_for")
+    @JoinColumn(name = "company", nullable = true)
     private TransportCompany company;
 
-    @OneToMany(mappedBy = "driver", targetEntity = Vehicle.class)
-    @Column(name = "drives", nullable = false)
+    @OneToMany(targetEntity = Vehicle.class)
+    @Column(name = "vehicles", nullable = true)
     private Set<Vehicle> vehicles;
 
     @ElementCollection(targetClass = DriverQualification.class, fetch = FetchType.EAGER)
@@ -27,18 +27,16 @@ public class Driver extends Person {
     @Enumerated(EnumType.STRING)
     private Set<DriverQualification> qualifications;
 
-    public Driver(String name, int age, String UCN, String phoneNumber, double salary, TransportCompany company, Set<DriverQualification> qualifications,
-                  Set<Vehicle> vehicles) {
-        super(name, age, UCN, phoneNumber);
-        this.company = company;
+    public Driver(String name, String UCN, String phoneNumber, double salary, Set<DriverQualification> qualifications, Set<Vehicle> vehicles) {
+        super(name, UCN, phoneNumber);
         this.qualifications = qualifications;
-        setSalary(salary);
         this.vehicles = vehicles;
+        setSalary(salary);
     }
 
     public Driver(){
         super();
-        company = new TransportCompany();
+        //company = new TransportCompany();
         qualifications = new TreeSet<>();
         salary = 0;
         vehicles = new TreeSet<>();
@@ -55,7 +53,8 @@ public class Driver extends Person {
         this.salary = salary;
     }
 
-    public TransportCompany getWorkingFor() {
+
+    public TransportCompany getCompany() {
         return company;
     }
 

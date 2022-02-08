@@ -5,6 +5,9 @@ import entity.TransportCompany;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +16,10 @@ public class TransportCompanyDAO {
     public static void saveTransportCompany(TransportCompany transportCompany) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
+            transportCompany.getClients().stream().forEach(client -> ClientDAO.saveClient(client));
+            transportCompany.getDrivers().stream().forEach(driver -> DriverDAO.saveDriver(driver));
+            transportCompany.getShipments().stream().forEach(shipment -> ShipmentDAO.saveShipment(shipment));
+            transportCompany.getVehicles().stream().forEach(vehicle -> VehicleDAO.saveVehicle(vehicle));
             session.save(transportCompany);
             transaction.commit();
         }
@@ -21,6 +28,9 @@ public class TransportCompanyDAO {
     public static void saveOrUpdateTransportCompany(TransportCompany transportCompany) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
+            transportCompany.getClients().stream().forEach(client -> ClientDAO.saveOrUpdateClient(client));
+            transportCompany.getDrivers().stream().forEach(driver -> DriverDAO.saveOrUpdateDriver(driver));
+            transportCompany.getShipments().stream().forEach(shipment -> ShipmentDAO.saveOrUpdateShipment(shipment));
             session.saveOrUpdate(transportCompany);
             transaction.commit();
         }
@@ -31,9 +41,7 @@ public class TransportCompanyDAO {
             Transaction transaction = session.beginTransaction();
             transportCompany.getClients().stream().forEach(client -> ClientDAO.deleteClient(client));
             transportCompany.getDrivers().stream().forEach(driver -> DriverDAO.deleteDriver(driver));
-            transportCompany.getFuelTankShipments().stream().forEach(fuelTankShipment -> FuelTankShipmentDAO.deleteFuelTankShipment(fuelTankShipment));
-            transportCompany.getGoodsShipments().stream().forEach(goodsShipment -> GoodsShipmentDAO.deleteGoodsShipment(goodsShipment));
-            transportCompany.getPeopleShipments().stream().forEach(peopleShipment -> PeopleShipmentDAO.deletePeopleShipment(peopleShipment));
+            transportCompany.getShipments().stream().forEach(shipment -> ShipmentDAO.deleteShipment(shipment));
             session.delete(transportCompany);
             transaction.commit();
         }
@@ -74,24 +82,15 @@ public class TransportCompanyDAO {
 
     public static List<TransportCompany> sortAllShipmentsByDestination(){
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Destination FROM PeopleShipment join GoodsShipment join FuelTankShipment Destination ORDER BY Destination.arrivalAddress",
+            return session.createQuery("SELECT Destination FROM Shipment Destination ORDER BY Destination.arrivalAddress",
                     TransportCompany.class).getResultList();
-
         }
     }
 
-    public static int countOfAllShipments(){
-        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT COUNT(All_Shipments) FROM PeopleShipment join GoodsShipment join FuelTankShipment All_Shipments",
-                    TransportCompany.class).getFetchSize();
-
-        }
-    }
-
-    public static double priceOfAllShipments(){
-        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT SUM(All_Shipments_Price) FROM PeopleShipment.shipmentPrice JOIN GoodsShipment.shipmentPrice JOIN FuelTankShipment.shipmentPrice All_Shipments_Price",
-                    TransportCompany.class).getFetchSize().doubleValue();
-        }
-    }
+//    public static int priceOfAllShipments(){
+//        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+//            return session.createQuery("SELECT SUM() FROM Shipment.shipmentPrice All_Shipments_Price",
+//                    TransportCompany.class).getFirstResult();
+//        }
+//    }
 }

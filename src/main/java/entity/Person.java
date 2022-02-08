@@ -1,9 +1,12 @@
 package entity;
 
+import net.bytebuddy.asm.Advice;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.Objects;
 
 @MappedSuperclass
@@ -15,13 +18,12 @@ public abstract class Person implements Comparable<Person> {
     @Id
     @Column(name = "ucn")
     protected String UCN;
-    @Column(name = "phoneNumber", nullable = true, unique = true)
+    @Column(name = "phone_number", nullable = false, unique = true)
     protected String phoneNumber;
 
-    protected Person(String name, int age, String UCN, String phoneNumber) {
+    protected Person(String name, String UCN, String phoneNumber) {
         setName(name);
-        setAge(age);
-        setUCN(UCN);
+        setUCNAndAge(UCN);
         setPhoneNumber(phoneNumber);
     }
 
@@ -71,18 +73,11 @@ public abstract class Person implements Comparable<Person> {
         return age;
     }
 
-    private void setAge(int age) {
-        if (age < 0) {
-            throw new IllegalArgumentException("The age cannot be a negative number!");
-        }
-        this.age = age;
-    }
-
     public String getUCN() {
         return UCN;
     }
 
-    private void setUCN(String UCN) {
+    private void setUCNAndAge(String UCN) {
         if (UCN.length() != 10) {
             throw new IllegalArgumentException("The length of the UCN is invalid!");
         }
@@ -126,6 +121,12 @@ public abstract class Person implements Comparable<Person> {
             throw new IllegalArgumentException("The UCN is invalid!");
         }
         this.UCN = UCN;
+
+        // Setting age based on the UCN
+        LocalDate birthDate = LocalDate.of(year, month, day);
+        LocalDate current = LocalDate.now();
+        Period period = Period.between(birthDate, current);
+        age = period.getYears();
     }
 
     public String getPhoneNumber() {

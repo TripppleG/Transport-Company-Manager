@@ -14,8 +14,8 @@ public class TransportCompanyManager {
     @Column(name = "id", nullable = false)
     private long id;
 
-    @OneToMany
-    @Column(name = "transport_companies", nullable = false)
+    @OneToMany(targetEntity = TransportCompany.class)
+    @Column(name = "transport_companies", nullable = true)
     private Set<TransportCompany> transportCompanies;
 
     public Long getId() {
@@ -47,6 +47,7 @@ public class TransportCompanyManager {
     }
 
     public void addTransportCompany(TransportCompany transportCompany) {
+        transportCompanies.add(transportCompany);
         TransportCompanyDAO.saveTransportCompany(transportCompany);
     }
 }

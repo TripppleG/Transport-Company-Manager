@@ -3,44 +3,21 @@ package entity;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Entity
 @Table(name = "fuel_shipment")
-@DiscriminatorValue("fuel_shipment")
 public class FuelTankShipment extends Shipment<Double> {
     @Column(name = "volume_of_shipment_in_litres", nullable = false)
     private double volumeOfShipmentInLitres;
 
-    @ManyToMany
-    @Column(name = "clients")
-    private Set<Client> clients;
-
-    @ManyToOne
-    private TransportCompany company;
-
-    public FuelTankShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, double volumeOfShipmentInLitres,
-                            TransportCompany company, Set<Client> clients) {
-        super(departingAddress, arrivalAddress, departingDate, arrivalDate, shipmentPrice);
+    public FuelTankShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, double volumeOfShipmentInLitres) {
+        super(departingAddress, arrivalAddress, departingDate, arrivalDate, shipmentPrice/*, client, driver, company*/);
         setVolumeOfShipmentInLitres(volumeOfShipmentInLitres);
-        this.company = company;
-        this.clients = clients;
     }
 
     public FuelTankShipment() {
         super();
-        volumeOfShipmentInLitres = 0;
-        company = new TransportCompany();
-        clients = new TreeSet<>();
-    }
-
-    public Set<Client> getClients() {
-        return clients;
-    }
-
-    public TransportCompany getCompany() {
-        return company;
+        volumeOfShipmentInLitres = 0.0;
     }
 
     @Override

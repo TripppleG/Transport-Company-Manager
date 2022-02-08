@@ -1,8 +1,11 @@
 package entity;
 
 import enums.DriverQualification;
+import jdk.jfr.BooleanFlag;
+import org.hibernate.type.BooleanType;
 
 import javax.persistence.*;
+import javax.print.DocFlavor;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -15,60 +18,33 @@ public class Client extends Person {
     private boolean hasPaidObligations;
 
     @ManyToMany(mappedBy = "clients", targetEntity = TransportCompany.class)
-    @Column(name = "client_of", nullable = false)
-    private Set<TransportCompany> clientOf;
+    private Set<TransportCompany> companies;
 
-    @ManyToMany(mappedBy = "clients", targetEntity = FuelTankShipment.class)
-    @Column(name = "fuel_tank_shipments")
-    private Set<FuelTankShipment> fuelTankShipments;
+    @OneToMany(targetEntity = Shipment.class)
+    @JoinColumn(name = "shipments")
+    private Set<Shipment> shipments;
 
-    @ManyToMany(mappedBy = "clients", targetEntity = GoodsShipment.class)
-    @Column(name = "goods_shipments")
-    private Set<GoodsShipment> goodsShipments;
-
-    @ManyToMany(mappedBy = "clients", targetEntity = PeopleShipment.class)
-    @Column(name = "people_shipments")
-    private Set<PeopleShipment> peopleShipments;
-
-    @ManyToMany(targetEntity = TransportCompany.class)
-    private Map<TransportCompany, Double> obligations;
-
-    public Client(String name, int age, String UCN, String phoneNumber, boolean hasPaidObligations, Set<TransportCompany> clientOf,
-                  Set<FuelTankShipment> fuelTankShipments, Set<GoodsShipment> goodsShipments, Set<PeopleShipment> peopleShipments) {
-        super(name, age, UCN, phoneNumber);
+    public Client(String name, String UCN, String phoneNumber, boolean hasPaidObligations) {
+        super(name,  UCN, phoneNumber);
         this.hasPaidObligations = hasPaidObligations;
-        this.clientOf = clientOf;
-        this.fuelTankShipments = new TreeSet<>();
-        this.goodsShipments = new TreeSet<>();
-        this.peopleShipments = new TreeSet<>();
+    }
+
+    public Client(String name, String UCN, String phoneNumber, boolean hasPaidObligations, Set<TransportCompany> companies, Set<Shipment> shipments) {
+        super(name, UCN, phoneNumber);
+        this.hasPaidObligations = hasPaidObligations;
+        this.companies = companies;
+        this.shipments = shipments;
     }
 
     public Client() {
         super();
         hasPaidObligations = false;
-        clientOf = new TreeSet<>();
-        fuelTankShipments = new TreeSet<>();
-        goodsShipments = new TreeSet<>();
-        peopleShipments = new TreeSet<>();
+        //companies = new TreeSet<>();
+        //shipments = new TreeSet<>();
     }
 
-    void payingObligations(TransportCompany transportCompany){
-        obligations.replace(transportCompany, 0.0);
-        if (obligations.values().stream().allMatch(v -> v.equals(0.0))) {
-            hasPaidObligations = true;
-        }
-    }
-
-    public Set<FuelTankShipment> getFuelTankShipments() {
-        return fuelTankShipments;
-    }
-
-    public Set<GoodsShipment> getGoodsShipments() {
-        return goodsShipments;
-    }
-
-    public Set<PeopleShipment> getPeopleShipments() {
-        return peopleShipments;
+    public Set<Shipment> getShipments() {
+        return shipments;
     }
 
     public boolean getHasPaidObligations() {
@@ -76,16 +52,16 @@ public class Client extends Person {
     }
 
     public Set<TransportCompany> getClientOf() {
-        return clientOf;
+        return companies;
     }
 
     @Override
     public String toString() {
         String clientOfString = "Client of: ";
         int counter = 1;
-        for (TransportCompany tmp : clientOf) {
+        for (TransportCompany tmp : companies) {
             clientOfString += tmp.getName();
-            if (counter == clientOf.size()) {
+            if (counter == companies.size()) {
                 break;
             }
             counter++;

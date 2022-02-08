@@ -16,7 +16,7 @@ public class Vehicle implements Comparable<Vehicle> {
     @Column(name = "model", nullable = false)
     private String model;
 
-    @Column(name = "vehicleType", nullable = false)
+    @Column(name = "vehicle_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
 
@@ -28,24 +28,23 @@ public class Vehicle implements Comparable<Vehicle> {
     private Driver driver;
 
     @Id
+    @Column(name = "license_number")
     private String licenseNumber;
 
-    public Vehicle(String brand, String model, VehicleType vehicleType, String licenseNumber, TransportCompany company, Driver driver) {
+    public Vehicle(String brand, String model, VehicleType vehicleType, String licenseNumber) {
         setBrand(brand);
         setModel(model);
         setVehicleType(vehicleType);
         setLicenseNumber(licenseNumber);
-        this.company = company;
-        this.driver = driver;
     }
 
     public Vehicle() {
-        company = new TransportCompany();
+        //company = new TransportCompany();
         brand = "";
         model = "";
         vehicleType = VehicleType.NULL;
         licenseNumber = "";
-        driver = new Driver();
+        //driver = new Driver();
     }
 
     public String getBrand() {
