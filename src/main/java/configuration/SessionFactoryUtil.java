@@ -15,12 +15,11 @@ public class SessionFactoryUtil {
             Configuration configuration = new Configuration();
             configuration.addAnnotatedClass(Client.class);
             configuration.addAnnotatedClass(Driver.class);
-            configuration.addAnnotatedClass(Shipment.class);
+            configuration.addAnnotatedClass(FuelTankShipment.class);
             configuration.addAnnotatedClass(GoodsShipment.class);
             configuration.addAnnotatedClass(PeopleShipment.class);
-            configuration.addAnnotatedClass(FuelTankShipment.class);
+            configuration.addAnnotatedClass(Shipment.class);
             configuration.addAnnotatedClass(TransportCompany.class);
-            configuration.addAnnotatedClass(TransportCompanyManager.class);
             configuration.addAnnotatedClass(Vehicle.class);
             ServiceRegistry serviceRegistry
                     = new StandardServiceRegistryBuilder()
@@ -28,7 +27,6 @@ public class SessionFactoryUtil {
 
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
         }
-
         return sessionFactory;
     }
 }

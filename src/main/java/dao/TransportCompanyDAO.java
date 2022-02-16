@@ -16,10 +16,6 @@ public class TransportCompanyDAO {
     public static void saveTransportCompany(TransportCompany transportCompany) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            transportCompany.getClients().stream().forEach(client -> ClientDAO.saveClient(client));
-            transportCompany.getDrivers().stream().forEach(driver -> DriverDAO.saveDriver(driver));
-            transportCompany.getShipments().stream().forEach(shipment -> ShipmentDAO.saveShipment(shipment));
-            transportCompany.getVehicles().stream().forEach(vehicle -> VehicleDAO.saveVehicle(vehicle));
             session.save(transportCompany);
             transaction.commit();
         }
@@ -28,9 +24,6 @@ public class TransportCompanyDAO {
     public static void saveOrUpdateTransportCompany(TransportCompany transportCompany) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            transportCompany.getClients().stream().forEach(client -> ClientDAO.saveOrUpdateClient(client));
-            transportCompany.getDrivers().stream().forEach(driver -> DriverDAO.saveOrUpdateDriver(driver));
-            transportCompany.getShipments().stream().forEach(shipment -> ShipmentDAO.saveOrUpdateShipment(shipment));
             session.saveOrUpdate(transportCompany);
             transaction.commit();
         }
@@ -39,9 +32,6 @@ public class TransportCompanyDAO {
     public static void deleteTransportCompany(TransportCompany transportCompany) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            transportCompany.getClients().stream().forEach(client -> ClientDAO.deleteClient(client));
-            transportCompany.getDrivers().stream().forEach(driver -> DriverDAO.deleteDriver(driver));
-            transportCompany.getShipments().stream().forEach(shipment -> ShipmentDAO.deleteShipment(shipment));
             session.delete(transportCompany);
             transaction.commit();
         }
@@ -69,7 +59,15 @@ public class TransportCompanyDAO {
     public static void saveTransportCompanies(Set<TransportCompany> transportCompanyList) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            transportCompanyList.stream().forEach(trCmp -> session.save(trCmp));
+            transportCompanyList.stream().forEach(trCmp -> TransportCompanyDAO.saveTransportCompany(trCmp));
+            transaction.commit();
+        }
+    }
+
+    public static void saveOrUpdateTransportCompanies(Set<TransportCompany> transportCompanyList) {
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            transportCompanyList.stream().forEach(trCmp -> TransportCompanyDAO.saveOrUpdateTransportCompany(trCmp));
             transaction.commit();
         }
     }
@@ -80,17 +78,36 @@ public class TransportCompanyDAO {
         }
     }
 
-    public static List<TransportCompany> sortAllShipmentsByDestination(){
+    public static List<TransportCompany> sortTransportCompaniesByName(){
+        // SELECT * FROM transport_company ORDER BY name
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Destination FROM Shipment Destination ORDER BY Destination.arrivalAddress",
-                    TransportCompany.class).getResultList();
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<TransportCompany> criteriaQuery = criteriaBuilder.createQuery(TransportCompany.class);
+            Root<TransportCompany> root = criteriaQuery.from(TransportCompany.class);
+            criteriaQuery.select(root).orderBy(criteriaBuilder.asc(root.get("name")));
+            return session.createQuery(criteriaQuery).getResultList();
         }
     }
 
-//    public static int priceOfAllShipments(){
-//        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-//            return session.createQuery("SELECT SUM() FROM Shipment.shipmentPrice All_Shipments_Price",
-//                    TransportCompany.class).getFirstResult();
-//        }
-//    }
+    public static List<TransportCompany> sortTransportCompaniesByIncome(){
+        // SELECT * FROM transport_company ORDER BY name
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<TransportCompany> criteriaQuery = criteriaBuilder.createQuery(TransportCompany.class);
+            Root<TransportCompany> root = criteriaQuery.from(TransportCompany.class);
+            criteriaQuery.select(root).orderBy(criteriaBuilder.asc(root.get("income")));
+            return session.createQuery(criteriaQuery).getResultList();
+        }
+    }
+
+    public static List<TransportCompany> sortTransportCompaniesByNameThenIncome(){
+        // SELECT * FROM transport_company ORDER BY name, income
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<TransportCompany> criteriaQuery = criteriaBuilder.createQuery(TransportCompany.class);
+            Root<TransportCompany> root = criteriaQuery.from(TransportCompany.class);
+            criteriaQuery.select(root).orderBy(criteriaBuilder.asc(root.get("name")), criteriaBuilder.asc(root.get("income")));
+            return session.createQuery(criteriaQuery).getResultList();
+        }
+    }
 }

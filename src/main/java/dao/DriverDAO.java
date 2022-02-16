@@ -5,6 +5,9 @@ import entity.Driver;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +16,6 @@ public class DriverDAO {
     public static void saveDriver(Driver driver) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            TransportCompanyDAO.saveTransportCompany(driver.getCompany());
             session.save(driver);
             transaction.commit();
         }
@@ -69,23 +71,35 @@ public class DriverDAO {
     }
 
     public static List<Driver> sortDriversBySalary(){
+        // SELECT * FROM driver ORDER BY salary
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-                return session.createQuery("SELECT Salary FROM Driver Salary ORDER BY Salary.salary", Driver.class).getResultList();
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Driver> criteriaQuery = criteriaBuilder.createQuery(Driver.class);
+            Root<Driver> root = criteriaQuery.from(Driver.class);
+            criteriaQuery.select(root).orderBy(criteriaBuilder.asc(root.get("salary")));
+            return session.createQuery(criteriaQuery).getResultList();
         }
     }
 
+//    public static List<Driver> sortDriversByQualifications(){
+//        // SELECT * FROM driver ORDER BY qualifications
+//        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+//            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+//            CriteriaQuery<Driver> criteriaQuery = criteriaBuilder.createQuery(Driver.class);
+//            Root<Driver> root = criteriaQuery.from(Driver.class);
+//            criteriaQuery.select(root).orderBy(criteriaBuilder.asc(root.get("qualifications").));
+//            return session.createQuery(criteriaQuery).getResultList();
+//        }
+//    }
 
-    // Sorts the drivers' qualifications by size ascending
-    public static List<Driver> sortDriversByQualifications(){
-        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Qualifications FROM Driver Qualifications ORDER BY Qualifications.qualifications.size", Driver.class).getResultList();
-        }
-    }
-
-    public static List<Driver> sortDriversBySalaryThenQualifications(){
-        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Salary_And_Qualifications FROM Driver Salary_And_Qualifications ORDER BY Salary_And_Qualifications.salary, Salary_And_Qualifications.qualifications.size",
-                    Driver.class).getResultList();
-        }
-    }
+//    public static List<Driver> sortDriversByQualificationsThenSalary(){
+//        // // SELECT * FROM driver ORDER BY qualifications,
+//        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+//            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+//            CriteriaQuery<Driver> criteriaQuery = criteriaBuilder.createQuery(Driver.class);
+//            Root<Driver> root = criteriaQuery.from(Driver.class);
+//            //criteriaQuery.select(root).orderBy(criteriaBuilder.asc(root.get("qualifications")), criteriaBuilder.asc(root.get("salary")));
+//            return session.createQuery(criteriaQuery).getResultList();
+//        }
+//    }
 }

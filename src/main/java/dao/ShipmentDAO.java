@@ -1,12 +1,9 @@
 package dao;
 
 import configuration.SessionFactoryUtil;
-import entity.Driver;
 import entity.Shipment;
-import entity.TransportCompany;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -18,8 +15,6 @@ public class ShipmentDAO {
     public static void saveShipment(Shipment shipment) {
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            DriverDAO.saveDriver(shipment.getDriver());
-            ClientDAO.saveClient(shipment.getClient());
             session.save(shipment);
             transaction.commit();
         }
@@ -73,7 +68,7 @@ public class ShipmentDAO {
         }
     }
 
-    public static Long countOfAllShipments(TransportCompany transportCompany){
+    public static Long countOfAllShipments(){
         // SELECT COUNT(*) FROM Shipments
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -85,8 +80,13 @@ public class ShipmentDAO {
     }
 
     public static List<Shipment> sortShipmentsByDestination(){
+        // SELECT * FROM Shipments ORDER BY arrivalAddress
         try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
-            return session.createQuery("SELECT Arrival_Address FROM Shipment Arrival_Address ORDER BY Arrival_Address.arrivalAddress", Shipment.class).getResultList();
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Shipment> criteriaQuery = criteriaBuilder.createQuery(Shipment.class);
+            Root<Shipment> root = criteriaQuery.from(Shipment.class);
+            criteriaQuery.select(root).orderBy(criteriaBuilder.asc(root.get("arrivalAddress")));
+            return session.createQuery(criteriaQuery).getResultList();
         }
     }
 }

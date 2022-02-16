@@ -9,37 +9,34 @@ import java.util.*;
 @Table(name = "transport_company")
 public class TransportCompany implements Comparable<TransportCompany> {
     @Id
-    @Column(name = "bulstat", nullable = false)
+    @Column(name = "bulstat", nullable = true)
     private String bulstat;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = true)
     private String name;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address", nullable = true)
     private String address;
 
-    @Column(name = "income", nullable = false)
+    @Column(name = "income", nullable = true)
     private double income;
 
-    @OneToMany(/*mappedBy = "company",*/ targetEntity = Driver.class)
+    @OneToMany(mappedBy = "company", targetEntity = Driver.class, cascade = CascadeType.ALL)
     private Set<Driver> drivers;
 
     @ManyToMany(targetEntity = Client.class)
-    @JoinColumn(name = "clients")
     private Set<Client> clients;
 
-    @OneToMany(targetEntity = Vehicle.class)
-    @Column(name = "vehicles")
+    @OneToMany(mappedBy = "company", targetEntity = Vehicle.class, cascade = CascadeType.ALL)
     private Set<Vehicle> vehicles;
 
-    @ManyToOne(targetEntity = TransportCompanyManager.class)
-    private TransportCompanyManager manager;
-
-    @OneToMany(targetEntity = Shipment.class)
+    @OneToMany(mappedBy = "company", targetEntity = Shipment.class, cascade = CascadeType.ALL)
     private Set<Shipment> shipments;
 
-    public TransportCompany(String name, String bulstat, String address, double income, Set<Driver> drivers, Set<Client> clients, Set<Vehicle> vehicles,
-                            Set<Shipment> shipments) {
+    @Column(name = "number_of_completed_shipments")
+    private int numberOfCompletedShipments;
+
+    public TransportCompany(String name, String bulstat, String address, double income, Set<Driver> drivers, Set<Client> clients, Set<Vehicle> vehicles, Set<Shipment> shipments) {
         setName(name);
         setBulstat(bulstat);
         setIncome(income);
@@ -48,6 +45,15 @@ public class TransportCompany implements Comparable<TransportCompany> {
         this.clients = clients;
         this.vehicles = vehicles;
         this.shipments = shipments;
+        numberOfCompletedShipments = 0;
+    }
+
+    public TransportCompany(String name, String bulstat, String address, double income) {
+        setName(name);
+        setBulstat(bulstat);
+        this.address = address;
+        setIncome(income);
+        numberOfCompletedShipments = 0;
     }
 
     public TransportCompany() {
@@ -55,11 +61,8 @@ public class TransportCompany implements Comparable<TransportCompany> {
         bulstat = "";
         address = "";
         income = 0;
-        //shipments = new TreeSet<>();
-        //drivers = new TreeSet<>();
-        //clients = new TreeSet<>();
-        //vehicles = new TreeSet<>();
     }
+
 
     public String getAddress() {
         return address;
@@ -119,10 +122,6 @@ public class TransportCompany implements Comparable<TransportCompany> {
         return vehicles;
     }
 
-    public TransportCompanyManager getManager() {
-        return manager;
-    }
-
     public Set<Shipment> getShipments() {
         return shipments;
     }
@@ -145,17 +144,17 @@ public class TransportCompany implements Comparable<TransportCompany> {
         printCompany += "Name: " + name;
         printCompany += "\nBulstat: " + bulstat;
         printCompany += "\nIncome: " + income;
-        printCompany += "\nDrivers:";
+        printCompany += "\n\nDrivers:";
         for (Driver d : drivers) {
             printCompany += '\n' + d.toString();
         }
         printCompany += "\nClients:";
         for (Client c : clients) {
-            printCompany = '\n' + c.toString();
+            printCompany = '\n' + c.toString() + '\n';
         }
-        printCompany += "\nGoods Shipment:";
+        printCompany += "\nShipments:";
         for (Shipment s : shipments) {
-            printCompany += '\n' + s.toString();
+            printCompany += '\n' + s.toString() + '\n';
         }
         printCompany += "\n\n";
         return printCompany;
@@ -168,48 +167,92 @@ public class TransportCompany implements Comparable<TransportCompany> {
 
     // Add functionalities
     public void addClient(Client client) {
-        ClientDAO.saveClient(client);
+        clients.add(client);
+        TransportCompanyDAO.saveTransportCompany(this);
     }
 
     public void addDriver(Driver driver) {
-        DriverDAO.saveDriver(driver);
+        drivers.add(driver);
+        TransportCompanyDAO.saveTransportCompany(this);
     }
 
     public void addVehicle(Vehicle vehicle) {
-        VehicleDAO.saveVehicle(vehicle);
+        vehicles.add(vehicle);
+        TransportCompanyDAO.saveTransportCompany(this);
     }
 
     public void addShipment(Shipment shipment) {
-        ShipmentDAO.saveShipment(shipment);
+        shipments.add(shipment);
     }
 
     // Remove functionalities
     public void removeClient(String ucn) {
-        ClientDAO.deleteClient(ClientDAO.getClient(ucn));
+        for (Client client : clients) {
+            if (client.getUCN().equals(ucn)) {
+                clients.remove(client);
+                TransportCompanyDAO.saveTransportCompany(this);
+                return;
+            }
+        }
+        throw new NoSuchElementException("No client with UCN " + ucn + "exists!");
+    }
+
+    public void removeClient(Client client){
+        clients.remove(client);
     }
 
     public void removeDriver(String ucn) {
-        DriverDAO.deleteDriver(DriverDAO.getDriver(ucn));
+        for (Driver driver : drivers) {
+            if (driver.getUCN().equals(ucn)) {
+                drivers.remove(driver);
+                TransportCompanyDAO.saveTransportCompany(this);
+                return;
+            }
+        }
+        throw new NoSuchElementException("No driver with UCN " + ucn + "exists!");
+    }
+
+
+    public void removeDriver(Driver driver){
+        drivers.remove(driver);
+        TransportCompanyDAO.saveTransportCompany(this);
     }
 
     public void removeVehicle(String licenseNumber) {
-        VehicleDAO.deleteVehicle(VehicleDAO.getVehicle(licenseNumber));
+        for (Vehicle vehicle : vehicles) {
+            if (vehicle.getLicenseNumber().equals(licenseNumber)) {
+                vehicles.remove(vehicle);
+                TransportCompanyDAO.saveTransportCompany(this);
+                return;
+            }
+        }
+        throw new NoSuchElementException("No vehicle with license number " + licenseNumber + " exists!");
     }
 
     public void removeShipment(long id) {
-        ShipmentDAO.deleteShipment(ShipmentDAO.getShipment(id));
+        for (Shipment shipment : shipments) {
+            if (shipment.getShipmentId().equals(id)) {
+                shipments.remove(shipment);
+                TransportCompanyDAO.saveTransportCompany(this);
+                return;
+            }
+        }
+        throw new NoSuchElementException("No shipment with ID " + id + " exists");
     }
 
     public void removeAllClients() {
-        ClientDAO.deleteClients(this.clients);
+        clients.clear();
+        TransportCompanyDAO.saveTransportCompany(this);
     }
 
     public void removeAllDrivers() {
-        DriverDAO.deleteDrivers(this.drivers);
+        drivers.clear();
+        TransportCompanyDAO.saveTransportCompany(this);
     }
 
     public void removeAllVehicles() {
-        VehicleDAO.deleteVehicles(this.vehicles);
+        vehicles.clear();
+        TransportCompanyDAO.saveTransportCompany(this);
     }
 
     // UpdateFunctionalities
@@ -217,7 +260,8 @@ public class TransportCompany implements Comparable<TransportCompany> {
         for (Client c : clients) {
             if (c.getUCN().equals(ucnOfClientToBeUpdated)) {
                 c = toBeUpdatedWith;
-                ClientDAO.saveOrUpdateClient(ClientDAO.getClient(toBeUpdatedWith.UCN));
+                ClientDAO.saveOrUpdateClient(c);
+                TransportCompanyDAO.saveTransportCompany(this);
                 return;
             }
         }
@@ -228,7 +272,8 @@ public class TransportCompany implements Comparable<TransportCompany> {
         for (Driver d : drivers) {
             if (d.getUCN().equals(ucnOfDriverToBeUpdated)) {
                 d = toBeUpdatedWith;
-                DriverDAO.saveOrUpdateDriver(DriverDAO.getDriver(toBeUpdatedWith.UCN));
+                DriverDAO.saveOrUpdateDriver(d);
+                TransportCompanyDAO.saveTransportCompany(this);
                 return;
             }
         }
@@ -239,7 +284,8 @@ public class TransportCompany implements Comparable<TransportCompany> {
         for (Vehicle v : vehicles) {
             if (v.getLicenseNumber().equals(licenseNumberOfVehicleToBeUpdated)) {
                 v = toBeUpdatedWith;
-                VehicleDAO.saveOrUpdateVehicle(VehicleDAO.getVehicle(toBeUpdatedWith.getLicenseNumber()));
+                VehicleDAO.saveOrUpdateVehicle(v);
+                TransportCompanyDAO.saveTransportCompany(this);
                 return;
             }
         }
@@ -250,10 +296,24 @@ public class TransportCompany implements Comparable<TransportCompany> {
         for (Shipment s : shipments) {
             if (s.getShipmentId().equals(idOfShipmentToBeUpdated)) {
                 s = toBeUpdatedWith;
-                ShipmentDAO.saveOrUpdateShipment(ShipmentDAO.getShipment(toBeUpdatedWith.getShipmentId()));
+                ShipmentDAO.saveOrUpdateShipment(s);
+                TransportCompanyDAO.saveTransportCompany(this);
                 return;
             }
         }
         throw new NoSuchElementException("No shipment with id " + idOfShipmentToBeUpdated + " exists!");
+    }
+
+    public void completeShipment(long shipmentID){
+        for (Shipment s: shipments) {
+            if (s.getShipmentId().equals(shipmentID)) {
+                income += s.getShipmentPrice();
+                numberOfCompletedShipments++;
+                shipments.remove(s);
+                TransportCompanyDAO.saveTransportCompany(this);
+                return;
+            }
+        }
+        throw new NoSuchElementException("No shipment with ID " + shipmentID + " exists!");
     }
 }

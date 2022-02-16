@@ -9,35 +9,32 @@ import java.util.Objects;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Shipment<T> implements Comparable<Shipment> {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "shipment_id")
     protected long shipmentId;
 
-    @Column(name = "departing_address"/*, nullable = false*/)
+    @Column(name = "departing_address"/*, nullable = true*/)
     protected String departingAddress;
 
-    @Column(name = "arrival_address"/*, nullable = false*/)
+    @Column(name = "arrival_address"/*, nullable = true*/)
     protected String arrivalAddress;
 
-    @Column(name = "departing_date"/*, nullable = false*/)
+    @Column(name = "departing_date"/*, nullable = true*/)
     protected LocalDate departingDate;
 
-    @Column(name = "arrival_date"/*, nullable = false*/)
+    @Column(name = "arrival_date"/*, nullable = true*/)
     protected LocalDate arrivalDate;
 
-    @Column(name = "shipment_price"/*, nullable = false*/)
+    @Column(name = "shipment_price"/*, nullable = true*/)
     protected double shipmentPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "client", nullable = true)
+    @ManyToOne(targetEntity = Client.class, fetch = FetchType.LAZY)
     protected Client client;
 
-    @ManyToOne(targetEntity = Driver.class)
-    @JoinColumn(name = "driver", nullable = true)
+    @ManyToOne(targetEntity = Driver.class, fetch = FetchType.LAZY)
     protected Driver driver;
 
-    @ManyToOne(targetEntity = TransportCompany.class)
-    @JoinColumn(name = "company", nullable = true)
+    @ManyToOne(targetEntity = TransportCompany.class, fetch = FetchType.LAZY)
     protected TransportCompany company;
 
     public Shipment() {
@@ -49,20 +46,17 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
     }
 
     public Shipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice) {
-        setDepartingAddress(departingAddress);
-        setArrivalAddress(arrivalAddress);
+        this.departingAddress = departingAddress;
+        this.arrivalAddress = arrivalAddress;
         setDepartingDate(departingDate);
         setArrivalDate(arrivalDate);
         setShipmentPrice(shipmentPrice);
-        //this.client = new Client();
-        //this.driver = new Driver();
-        //this.company = new TransportCompany();
     }
 
-    public Shipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, Client client, Driver driver, TransportCompany company) {
-        setDepartingAddress(departingAddress);
-        setArrivalAddress(arrivalAddress);
-        setDepartingDate(departingDate);
+    public Shipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, Client client, Driver driver,
+                    TransportCompany company) {
+        this.departingAddress = departingAddress;
+        this.arrivalAddress = arrivalAddress;
         setArrivalDate(arrivalDate);
         setShipmentPrice(shipmentPrice);
         this.client = client;
@@ -90,16 +84,8 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
         return departingAddress;
     }
 
-    private void setDepartingAddress(String departingAddress) {
-        this.departingAddress = departingAddress;
-    }
-
     public String getArrivalAddress() {
         return arrivalAddress;
-    }
-
-    private void setArrivalAddress(String arrivalAddress) {
-        this.arrivalAddress = arrivalAddress;
     }
 
     public LocalDate getDepartingDate() {
@@ -149,7 +135,7 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(departingAddress, arrivalAddress, departingDate, arrivalDate, shipmentPrice);
+        return Objects.hash(shipmentId, departingAddress, arrivalAddress, departingDate, arrivalDate, shipmentPrice);
     }
 
     @Override
@@ -160,7 +146,8 @@ public abstract class Shipment<T> implements Comparable<Shipment> {
 
     @Override
     public String toString() {
-        return "Departing address: " + departingAddress + '\n' +
+        return  "Shipment ID: " + shipmentId + '\n' +
+                "Departing address: " + departingAddress + '\n' +
                 "Arrival address: " + arrivalAddress + '\n' +
                 "Departing Date: " + departingDate + '\n' +
                 "Arrival date: " + arrivalDate + '\n' +

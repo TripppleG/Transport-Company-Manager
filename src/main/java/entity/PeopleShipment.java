@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "people_transport")
 public class PeopleShipment extends Shipment<Integer> {
-    @Column(name = "number_of_people", nullable = false)
+    @Column(name = "number_of_people", nullable = true)
     private int numberOfPeople;
 
     public PeopleShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, int numberOfPeople) {

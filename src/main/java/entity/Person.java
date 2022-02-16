@@ -1,7 +1,5 @@
 package entity;
 
-import net.bytebuddy.asm.Advice;
-
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -11,14 +9,14 @@ import java.util.Objects;
 
 @MappedSuperclass
 public abstract class Person implements Comparable<Person> {
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = true)
     protected String name;
-    @Column(name = "age", nullable = false)
+    @Column(name = "age", nullable = true)
     protected int age;
     @Id
     @Column(name = "ucn")
     protected String UCN;
-    @Column(name = "phone_number", nullable = false, unique = true)
+    @Column(name = "phone_number", nullable = true, unique = true)
     protected String phoneNumber;
 
     protected Person(String name, String UCN, String phoneNumber) {

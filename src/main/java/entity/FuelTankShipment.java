@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "fuel_shipment")
 public class FuelTankShipment extends Shipment<Double> {
-    @Column(name = "volume_of_shipment_in_litres", nullable = false)
+    @Column(name = "volume_of_shipment_in_litres", nullable = true)
     private double volumeOfShipmentInLitres;
 
     public FuelTankShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, double volumeOfShipmentInLitres) {

@@ -1,26 +1,14 @@
 package entity;
 
 import dao.TransportCompanyDAO;
-import javax.persistence.*;
+
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
-@Entity
-@Table(name = "transport_company_list")
 public class TransportCompanyManager {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private long id;
-
-    @OneToMany(targetEntity = TransportCompany.class)
-    @Column(name = "transport_companies", nullable = true)
     private Set<TransportCompany> transportCompanies;
-
-    public Long getId() {
-        return id;
-    }
 
     public TransportCompanyManager(Set<TransportCompany> transportCompanies) {
         this.transportCompanies = transportCompanies;
@@ -30,8 +18,20 @@ public class TransportCompanyManager {
         this.transportCompanies = new TreeSet<>();
     }
 
-    public Set<TransportCompany> getTransportCompanies() {
-        return transportCompanies;
+    public void addTransportCompany(TransportCompany transportCompany){
+        transportCompanies.add(transportCompany);
+        TransportCompanyDAO.saveOrUpdateTransportCompanies(transportCompanies);
+    }
+
+    public void removeTransportCompany(String bulstat){
+        for (TransportCompany transportCompany : transportCompanies) {
+            if (transportCompany.getBulstat().equals(bulstat)) {
+                transportCompanies.remove(transportCompany);
+                TransportCompanyDAO.saveOrUpdateTransportCompanies(transportCompanies);
+                return;
+            }
+        }
+        throw new NoSuchElementException("No company with bulstat " + bulstat + "exists!");
     }
 
     @Override
@@ -44,10 +44,5 @@ public class TransportCompanyManager {
     @Override
     public int hashCode() {
         return Objects.hash(transportCompanies);
-    }
-
-    public void addTransportCompany(TransportCompany transportCompany) {
-        transportCompanies.add(transportCompany);
-        TransportCompanyDAO.saveTransportCompany(transportCompany);
     }
 }

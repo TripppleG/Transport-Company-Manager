@@ -3,8 +3,8 @@ package entity;
 import enums.DriverQualification;
 
 import javax.persistence.*;
+import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.TreeSet;
 
 @Entity
 @Table(name = "driver")
@@ -13,33 +13,55 @@ public class Driver extends Person {
     @Column(name = "salary")
     private double salary;
 
-    @ManyToOne(targetEntity = TransportCompany.class)
-    @JoinColumn(name = "company", nullable = true)
+    @ManyToOne(targetEntity = TransportCompany.class, fetch = FetchType.LAZY)
     private TransportCompany company;
 
-    @OneToMany(targetEntity = Vehicle.class)
-    @Column(name = "vehicles", nullable = true)
+    @OneToMany(mappedBy = "driver", targetEntity = Vehicle.class, cascade = CascadeType.ALL)
     private Set<Vehicle> vehicles;
+
+    @OneToMany(mappedBy = "driver", targetEntity = Shipment.class, cascade = CascadeType.ALL)
+    private Set<Shipment> shipments;
+
+    @Column(name = "number_of_completed_shipments")
+    private int numberOfCompletedShipments;
 
     @ElementCollection(targetClass = DriverQualification.class, fetch = FetchType.EAGER)
     @JoinTable(name = "driver_qualifications", joinColumns = @JoinColumn(name = "driver_ucn"))
-    @Column(name = "qualifications", nullable = false)
+    @Column(name = "qualifications", nullable = true)
     @Enumerated(EnumType.STRING)
     private Set<DriverQualification> qualifications;
 
-    public Driver(String name, String UCN, String phoneNumber, double salary, Set<DriverQualification> qualifications, Set<Vehicle> vehicles) {
+    public Driver(String name, String UCN, String phoneNumber, double salary, Set<DriverQualification> qualifications) {
         super(name, UCN, phoneNumber);
         this.qualifications = qualifications;
-        this.vehicles = vehicles;
         setSalary(salary);
+        numberOfCompletedShipments = 0;
     }
+
+    public Driver(String name, String UCN, String phoneNumber, double salary, Set<DriverQualification> qualifications, Set<Vehicle> vehicles, TransportCompany company,
+                  Set<Shipment> shipments) {
+        super(name, UCN, phoneNumber);
+        setSalary(salary);
+        this.vehicles = vehicles;
+        this.qualifications = qualifications;
+        this.company = company;
+        this.shipments = shipments;
+        numberOfCompletedShipments = 0;
+    }
+
 
     public Driver(){
         super();
-        //company = new TransportCompany();
-        qualifications = new TreeSet<>();
         salary = 0;
-        vehicles = new TreeSet<>();
+        numberOfCompletedShipments = 0;
+    }
+
+    public int getNumberOfCompletedShipments() {
+        return numberOfCompletedShipments;
+    }
+
+    void incrementNumberOfCompletedShipments(){
+        numberOfCompletedShipments++;
     }
 
     public double getSalary() {
@@ -62,7 +84,13 @@ public class Driver extends Person {
         return qualifications;
     }
 
+    public Set<Vehicle> getVehicles() {
+        return vehicles;
+    }
 
+    public Set<Shipment> getShipments() {
+        return shipments;
+    }
 
     public Set<DriverQualification> getQualification() {
         return qualifications;
@@ -85,5 +113,16 @@ public class Driver extends Person {
             listOfQualifications += ", ";
         }
         return super.toString() + "\nSalary: " + salary + "\nQualifications: " + listOfQualifications + '\n';
+    }
+
+    public void completeShipment(long shipmentID){
+        for (Shipment s: shipments) {
+            if (s.getShipmentId().equals(shipmentID)) {
+                numberOfCompletedShipments++;
+                shipments.remove(s);
+                return;
+            }
+        }
+        throw new NoSuchElementException("No shipment with ID " + shipmentID + " exists!");
     }
 }

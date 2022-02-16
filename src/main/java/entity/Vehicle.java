@@ -1,7 +1,6 @@
 package entity;
 
 import enums.VehicleType;
-import org.hibernate.tool.schema.spi.SchemaDropper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +12,7 @@ import java.util.*;
 public class Vehicle implements Comparable<Vehicle> {
     @Column(name = "brand", nullable = false)
     private String brand;
+
     @Column(name = "model", nullable = false)
     private String model;
 
@@ -20,16 +20,15 @@ public class Vehicle implements Comparable<Vehicle> {
     @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
 
-    @ManyToOne(targetEntity = TransportCompany.class)
-    private TransportCompany company;
-
-    @ManyToOne(targetEntity = Driver.class)
-    @JoinColumn(name = "driven_by")
+    @ManyToOne(targetEntity = Driver.class, fetch = FetchType.LAZY)
     private Driver driver;
 
     @Id
-    @Column(name = "license_number")
+    @Column(name = "license_number", nullable = false)
     private String licenseNumber;
+
+    @ManyToOne(targetEntity = TransportCompany.class, fetch = FetchType.LAZY)
+    private TransportCompany company;
 
     public Vehicle(String brand, String model, VehicleType vehicleType, String licenseNumber) {
         setBrand(brand);
@@ -39,12 +38,10 @@ public class Vehicle implements Comparable<Vehicle> {
     }
 
     public Vehicle() {
-        //company = new TransportCompany();
         brand = "";
         model = "";
         vehicleType = VehicleType.NULL;
         licenseNumber = "";
-        //driver = new Driver();
     }
 
     public String getBrand() {
@@ -129,7 +126,7 @@ public class Vehicle implements Comparable<Vehicle> {
 
     @Override
     public String toString() {
-        return "Brand: " + brand + '\n' +
+        return  "Brand: " + brand + '\n' +
                 "Model: " + model + '\n' +
                 "entity.Vehicle type: " + vehicleType + '\n' +
                 "License number : " + licenseNumber;

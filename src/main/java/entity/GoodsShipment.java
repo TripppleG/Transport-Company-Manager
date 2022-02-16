@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "goods_shipment")
 public class GoodsShipment extends Shipment<Double> {
-    @Column(name = "weight_of_shipment", nullable = false)
+    @Column(name = "weight_of_shipment", nullable = true)
     private double weightOfShipmentInKilograms;
 
     public GoodsShipment(String departingAddress, String arrivalAddress, LocalDate departingDate, LocalDate arrivalDate, double shipmentPrice, double weightOfShipmentInKilograms) {
